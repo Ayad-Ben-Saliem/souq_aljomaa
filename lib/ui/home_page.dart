@@ -18,6 +18,7 @@ import 'package:souq_aljomaa/ui/pages/model4page.dart';
 import 'package:souq_aljomaa/ui/pages/model5page.dart';
 import 'package:souq_aljomaa/ui/pages/model6page.dart';
 import 'package:souq_aljomaa/ui/pages/model7page.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 final modelController = ModelController();
 
@@ -102,7 +103,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
           ),
-          const Expanded(child: Placeholder()),
+          // Expanded(child: SfPdfViewer.asset('assets/pdf/dummy.pdf')),
+          Expanded(child: SfPdfViewer.network('https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf')),
         ],
       ),
       floatingActionButton: FloatingActionButton(

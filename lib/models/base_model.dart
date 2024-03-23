@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 
 abstract class BaseModel extends Equatable {
-  const BaseModel({this.id, this.at});
+  const BaseModel({this.id, this.at, required this.scanner});
 
-  BaseModel.copyWith(BaseModel model, {int? id, DateTime? at})
+  BaseModel.copyWith(BaseModel model, {int? id, DateTime? at, required String? scanner})
       : id = id ?? model.id,
-        at = at ?? model.at;
+        at = at ?? model.at,
+        scanner = scanner ?? model.scanner;
 
   String get documentType;
 
@@ -16,6 +16,8 @@ abstract class BaseModel extends Equatable {
 
   final DateTime? at;
 
+  final String? scanner;
+
   @override
-  List<Object?> get props => [id, at];
+  List<Object?> get props => [id, at, scanner];
 }

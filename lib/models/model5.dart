@@ -39,6 +39,7 @@ class Model5 extends BaseModel {
   const Model5({
     super.id,
     super.at,
+    super.scanner,
     required this.locality,
     required this.witness,
     required this.responsible,
@@ -63,6 +64,7 @@ class Model5 extends BaseModel {
     Model5 super.model, {
     super.id,
     super.at,
+    super.scanner,
     String? locality,
     String? witness,
     String? responsible,
@@ -104,6 +106,7 @@ class Model5 extends BaseModel {
   Model5 copyWith({
     int? id,
     DateTime? at,
+    String? scanner,
     String? locality,
     String? witness,
     String? responsible,
@@ -127,6 +130,7 @@ class Model5 extends BaseModel {
         this,
         id: id,
         at: at,
+        scanner: scanner,
         locality: locality,
         witness: witness,
         responsible: responsible,
@@ -151,6 +155,7 @@ class Model5 extends BaseModel {
     return Model5(
       id: json['id'],
       at: DateTime.parse(json['at']),
+      scanner: json['scanner'],
       locality: json['locality'],
       witness: json['witness'],
       responsible: json['responsible'],

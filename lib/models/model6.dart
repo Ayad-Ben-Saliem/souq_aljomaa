@@ -26,6 +26,7 @@ class Model6 extends BaseModel {
   const Model6({
     super.id,
     super.at,
+    super.scanner,
     required this.ownerName,
     required this.ownerPhone,
     required this.tenantName,
@@ -40,6 +41,7 @@ class Model6 extends BaseModel {
     Model6 super.model, {
     super.id,
     super.at,
+    super.scanner,
     String? ownerName,
     String? ownerPhone,
     String? tenantName,
@@ -61,6 +63,7 @@ class Model6 extends BaseModel {
   Model6 copyWith({
     int? id,
     DateTime? at,
+    String? scanner,
     String? ownerName,
     String? ownerPhone,
     String? tenantName,
@@ -74,6 +77,7 @@ class Model6 extends BaseModel {
         this,
         id: id,
         at: at,
+        scanner: scanner,
         ownerName: ownerName,
         ownerPhone: ownerPhone,
         tenantName: tenantName,
@@ -88,6 +92,7 @@ class Model6 extends BaseModel {
     return Model6(
       id: json['id'],
       at: DateTime.parse(json['at']),
+      scanner: json['scanner'],
       ownerName: json['ownerName'],
       ownerPhone: json['ownerPhone'],
       tenantName: json['tenantName'],

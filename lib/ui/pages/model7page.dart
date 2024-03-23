@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:date_field/date_field.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:souq_aljomaa/models/model7.dart';
+import 'package:souq_aljomaa/storage/file_manager.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/custom_text_field.dart';
 import 'package:souq_aljomaa/ui/home_page.dart';
@@ -12,6 +16,8 @@ final _modelProvider = StateProvider((ref) => _initialValue);
 final _formKey = GlobalKey<FormState>();
 
 var _initialValue = Model7(
+  streetNo: '',
+  buildingNo: '',
   registrationNo: '',
   familyHeadName: '',
   malesCount: 0,
@@ -73,6 +79,38 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                               ],
                             ),
                             const CustomText('بلدية سوق الجمعة'),
+                            const SizedBox(height: 16),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(width: 150, child: CustomText('رقم الشارع: ')),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: CustomTextFormField(
+                                    initialValue: _initialValue.streetNo,
+                                    onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(streetNo: txt),
+                                    validator: (txt) => ref.read(_modelProvider.select((model) => model.streetNo)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(width: 150, child: CustomText('رقم المبنى: ')),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: CustomTextFormField(
+                                    initialValue: _initialValue.buildingNo,
+                                    onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(buildingNo: txt),
+                                    validator: (txt) => ref.read(_modelProvider.select((model) => model.buildingNo)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
+                                  ),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 16),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -375,6 +413,34 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                               ],
                             ),
                             const SizedBox(height: 32),
+                            ElevatedButton(
+                              onPressed: () async {
+                                FilePickerResult? result = await FilePicker.platform.pickFiles(dialogTitle: 'اختر صورة', type: FileType.image);
+                                if (result == null) return;
+                                ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(scanner: result.files.first.path);
+                              },
+                              child: const Text('تحميل صورة للمستند'),
+                            ),
+                            const SizedBox(height: 16),
+                            Consumer(
+                              builder: (context, ref, _) {
+                                final imagePath = ref.watch(_modelProvider.select((model) => model.scanner));
+                                if (imagePath == null || imagePath.isEmpty) return Container();
+                                return ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 256, maxHeight: 256),
+                                  child: Stack(
+                                    children: [
+                                      Image.file(File(imagePath)),
+                                      IconButton(
+                                        onPressed: () => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(scanner: ''),
+                                        icon: const Icon(Icons.delete_outline),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 32),
                             const Padding(
                               padding: EdgeInsets.all(32),
                               child: CustomText('مختار المحلة'),
@@ -395,40 +461,47 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                   const Padding(padding: EdgeInsets.all(8.0), child: Divider()),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Consumer(builder: (context, ref, child) {
-                      return ElevatedButton(
-                        onPressed: () async {
-                          Scaffold.of(context).showBottomSheet(
-                            (_) => const SizedBox(
-                              height: 64,
-                              width: 256,
-                              child: Center(child: CustomText('تم الحفظ بنجاح')),
-                            ),
-                          );
-                          WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pop(context));
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        return ElevatedButton(
+                          onPressed: () async {
+                            Scaffold.of(context).showBottomSheet(
+                              (_) => const SizedBox(
+                                height: 64,
+                                width: 256,
+                                child: Center(child: CustomText('تم الحفظ بنجاح')),
+                              ),
+                            );
+                            WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pop(context));
 
-                          if (_formKey.currentState?.validate() == true) {
-                            var model = ref.read(_modelProvider);
-                            if (model.registrationNo.trim().isNotEmpty ||
-                                model.familyHeadName.trim().isNotEmpty ||
-                                model.formFiller.name.trim().isNotEmpty ||
-                                model.formFiller.phoneNo.trim().isNotEmpty) {
-                              modelController.save(model).then((value) {
-                                showModalBottomSheet(context: context, builder: (_) => const CustomText('تم الحفظ بنجاح'));
-                                Navigator.pop(context);
-                                // TODO: reload list in home page
-                                // ref.invalidate(allModels);
-                              });
+                            if (_formKey.currentState?.validate() == true) {
+                              var model = ref.read(_modelProvider);
+                              if (model.streetNo.trim().isNotEmpty ||
+                                  model.buildingNo.trim().isNotEmpty ||
+                                  model.registrationNo.trim().isNotEmpty ||
+                                  model.familyHeadName.trim().isNotEmpty ||
+                                  model.formFiller.name.trim().isNotEmpty ||
+                                  model.formFiller.phoneNo.trim().isNotEmpty) {
+                                if (model.scanner?.isNotEmpty == true) {
+                                  model = model.copyWith(scanner: await FileManager.saveImage(model.scanner!));
+                                }
+                                modelController.save(model).then((value) {
+                                  Navigator.pop(context);
+                                  showModalBottomSheet(context: context, builder: (_) => const CustomText('تم الحفظ بنجاح'));
+                                  // TODO: reload list in home page
+                                  // ref.invalidate(allModels);
+                                });
+                              }
                             }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const CustomText('حفظ'),
-                      );
-                    }),
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const CustomText('حفظ'),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -440,15 +513,19 @@ class _Model7PageState extends ConsumerState<Model7Page> {
   }
 
   Widget _widowRow(Widow widow, int index) {
-    final nameController = TextEditingController(text: widow.name);
-    final malesCountController = TextEditingController(text: widow.malesCount.toString());
-    final femalesCountController = TextEditingController(text: widow.femalesCount.toString());
+    // final nameController = TextEditingController(text: widow.name);
+    // final malesCountController = TextEditingController(text: widow.malesCount.toString());
+    // final femalesCountController = TextEditingController(text: widow.femalesCount.toString());
+
+    print(widow.malesCount);
+    print(widow.femalesCount);
 
     return Row(
       children: [
         Flexible(
           child: CustomTextFormField(
-            controller: nameController,
+            initialValue: widow.name,
+            // controller: nameController,
             decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('الاسم')),
             onChanged: (txt) {
               final model = ref.read(_modelProvider);
@@ -462,7 +539,8 @@ class _Model7PageState extends ConsumerState<Model7Page> {
         const SizedBox(width: 8),
         Flexible(
           child: CustomTextFormField(
-            controller: malesCountController,
+            initialValue: widow.malesCount.toString(),
+            // controller: malesCountController,
             decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('ذكور')),
             onChanged: (txt) {
               final model = ref.read(_modelProvider);
@@ -476,7 +554,8 @@ class _Model7PageState extends ConsumerState<Model7Page> {
         const SizedBox(width: 8),
         Flexible(
           child: CustomTextFormField(
-            controller: femalesCountController,
+            initialValue: widow.malesCount.toString(),
+            // controller: femalesCountController,
             decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('إناث')),
             onChanged: (txt) {
               final model = ref.read(_modelProvider);
@@ -515,15 +594,16 @@ class _Model7PageState extends ConsumerState<Model7Page> {
   }
 
   Widget _divorcedRow(Divorced divorced, int index) {
-    final nameController = TextEditingController(text: divorced.name);
-    final malesCountController = TextEditingController(text: divorced.malesCount.toString());
-    final femalesCountController = TextEditingController(text: divorced.femalesCount.toString());
+    // final nameController = TextEditingController(text: divorced.name);
+    // final malesCountController = TextEditingController(text: divorced.malesCount.toString());
+    // final femalesCountController = TextEditingController(text: divorced.femalesCount.toString());
 
     return Row(
       children: [
         Flexible(
           child: CustomTextFormField(
-            controller: nameController,
+            initialValue: divorced.name,
+            // controller: nameController,
             decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('الاسم')),
             onChanged: (txt) {
               final model = ref.read(_modelProvider);
@@ -537,7 +617,8 @@ class _Model7PageState extends ConsumerState<Model7Page> {
         const SizedBox(width: 8),
         Flexible(
           child: CustomTextFormField(
-            controller: malesCountController,
+            initialValue: divorced.malesCount.toString(),
+            // controller: malesCountController,
             decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('ذكور')),
             onChanged: (txt) {
               final model = ref.read(_modelProvider);
@@ -551,7 +632,8 @@ class _Model7PageState extends ConsumerState<Model7Page> {
         const SizedBox(width: 8),
         Flexible(
           child: CustomTextFormField(
-            controller: femalesCountController,
+            initialValue: divorced.femalesCount.toString(),
+            // controller: femalesCountController,
             decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('إناث')),
             onChanged: (txt) {
               final model = ref.read(_modelProvider);
@@ -590,14 +672,15 @@ class _Model7PageState extends ConsumerState<Model7Page> {
   }
 
   Widget _lowIncomeRow(LowIncome lowIncome, int index) {
-    final nameController = TextEditingController(text: lowIncome.name);
+    // final nameController = TextEditingController(text: lowIncome.name);
     // final typeCountController = TextEditingController(text: lowIncome.type.toString());
 
     return Row(
       children: [
         Flexible(
           child: CustomTextFormField(
-            controller: nameController,
+            initialValue: lowIncome.name,
+            // controller: nameController,
             decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('الاسم')),
             onChanged: (txt) {
               final model = ref.read(_modelProvider);
@@ -655,14 +738,15 @@ class _Model7PageState extends ConsumerState<Model7Page> {
   }
 
   Widget __unemployedRow(Unemployed unemployed, int index) {
-    final nameController = TextEditingController(text: unemployed.name);
+    // final nameController = TextEditingController(text: unemployed.name);
     // final typeCountController = TextEditingController(text: lowIncome.type.toString());
 
     return Row(
       children: [
         Flexible(
           child: CustomTextFormField(
-            controller: nameController,
+            initialValue: unemployed.name,
+            // controller: nameController,
             decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('الاسم')),
             onChanged: (txt) {
               final model = ref.read(_modelProvider);

@@ -35,6 +35,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model1 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
+        scanner TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -55,6 +56,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model2 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
+        scanner TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -75,6 +77,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model3 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
+        scanner TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -95,6 +98,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model4 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
+        scanner TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -116,6 +120,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model5 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
+        scanner TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -141,6 +146,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model6 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
+        scanner TEXT,
         ownerName TEXT NOT NULL,
         ownerPhone TEXT NOT NULL,
         tenantName TEXT NOT NULL,
@@ -152,27 +158,13 @@ abstract class Database {
       )
     ''');
 
-    /*
-      ,
-      ,
-      ,
-      ,
-      ...widows,
-      ...divorced,
-      disabilities,
-      ...lowIncome,
-      ...unemployed,
-      ,
-      ,
-      formFiller,
-      ,
-
-     */
-
     _db.execute('''
       CREATE TABLE IF NOT EXISTS Model7 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
+        scanner TEXT,
+        streetNo TEXT NOT NULL,
+        buildingNo TEXT NOT NULL,
         registrationNo TEXT NOT NULL,
         familyHeadName TEXT NOT NULL,
         malesCount INTEGER NOT NULL,
@@ -302,6 +294,7 @@ abstract class Database {
       '''
       INSERT INTO Model1 (
         at,
+        scanner,
         locality,
         witness,
         responsible,
@@ -315,10 +308,11 @@ abstract class Database {
         testimony,
         date1,
         date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
+        model.scanner,
         model.locality,
         model.witness,
         model.responsible,
@@ -376,6 +370,7 @@ abstract class Database {
       '''
       INSERT INTO Model2 (
         at,
+        scanner,
         locality,
         witness,
         responsible,
@@ -389,10 +384,11 @@ abstract class Database {
         testimony,
         date1,
         date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
+        model.scanner,
         model.locality,
         model.witness,
         model.responsible,
@@ -450,6 +446,7 @@ abstract class Database {
       '''
       INSERT INTO Model3 (
         at,
+        scanner,
         locality,
         witness,
         responsible,
@@ -463,10 +460,11 @@ abstract class Database {
         testimony,
         date1,
         date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
+        model.scanner,
         model.locality,
         model.witness,
         model.responsible,
@@ -523,6 +521,7 @@ abstract class Database {
       '''
       INSERT INTO Model4 (
         at,
+        scanner,
         locality,
         witness,
         responsible,
@@ -536,10 +535,11 @@ abstract class Database {
         testimony,
         date1,
         date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
+        model.scanner,
         model.locality,
         model.witness,
         model.responsible,
@@ -596,6 +596,7 @@ abstract class Database {
       '''
       INSERT INTO Model5 (
         at,
+        scanner,
         locality,
         witness,
         responsible,
@@ -614,10 +615,11 @@ abstract class Database {
         nearestPoint,
         date1,
         date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
+        model.scanner,
         model.locality,
         model.witness,
         model.responsible,
@@ -680,6 +682,7 @@ abstract class Database {
       '''
       INSERT INTO Model6 (
         at,
+        scanner,
         ownerName,
         ownerPhone,
         tenantName,
@@ -692,6 +695,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
+        model.scanner,
         model.ownerName,
         model.ownerPhone,
         model.tenantName,
@@ -751,6 +755,9 @@ abstract class Database {
       '''
       INSERT INTO Model7 (
         at,
+        scanner,
+        streetNo,
+        buildingNo,
         registrationNo,
         familyHeadName,
         malesCount,
@@ -764,10 +771,13 @@ abstract class Database {
         currentFamilyHeadName,
         formFiller,
         notes
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
+        model.scanner,
+        model.streetNo,
+        model.buildingNo,
         model.registrationNo,
         model.familyHeadName,
         model.malesCount,
@@ -816,11 +826,11 @@ abstract class Database {
     const jsonDecoder = JsonDecoder();
 
     json['widows'] = jsonDecoder.convert(json['widows']).cast<JsonMap>();
-    json['divorced']  = jsonDecoder.convert(json['divorced']).cast<JsonMap>();
-    json['disabilities']  = jsonDecoder.convert(json['disabilities']);
-    json['lowIncome']  = jsonDecoder.convert(json['lowIncome']).cast<JsonMap>();
-    json['unemployed']  = jsonDecoder.convert(json['unemployed']).cast<JsonMap>();
-    json['formFiller']  = jsonDecoder.convert(json['formFiller']);
+    json['divorced'] = jsonDecoder.convert(json['divorced']).cast<JsonMap>();
+    json['disabilities'] = jsonDecoder.convert(json['disabilities']);
+    json['lowIncome'] = jsonDecoder.convert(json['lowIncome']).cast<JsonMap>();
+    json['unemployed'] = jsonDecoder.convert(json['unemployed']).cast<JsonMap>();
+    json['formFiller'] = jsonDecoder.convert(json['formFiller']);
 
     return json;
   }

@@ -234,6 +234,9 @@ class Model7 extends BaseModel {
 
   static String get title => 'نموذج حصر العائلات الليبية محلة عرادة';
 
+  final String streetNo;
+  final String buildingNo;
+
   final String registrationNo;
   final String familyHeadName;
 
@@ -258,6 +261,9 @@ class Model7 extends BaseModel {
   Model7({
     super.id,
     super.at,
+    super.scanner,
+    required this.streetNo,
+    required this.buildingNo,
     required this.registrationNo,
     required this.familyHeadName,
     required this.malesCount,
@@ -280,6 +286,9 @@ class Model7 extends BaseModel {
     Model7 super.model, {
     super.id,
     super.at,
+    super.scanner,
+    String? streetNo,
+    String? buildingNo,
     String? registrationNo,
     String? familyHeadName,
     int? malesCount,
@@ -293,7 +302,10 @@ class Model7 extends BaseModel {
     String? currentFamilyHeadName,
     FormFiller? formFiller,
     String? notes,
-  })  : registrationNo = registrationNo ?? model.registrationNo,
+  })  :
+        streetNo = streetNo ?? model.streetNo,
+        buildingNo = buildingNo ?? model.buildingNo,
+        registrationNo = registrationNo ?? model.registrationNo,
         familyHeadName = familyHeadName ?? model.familyHeadName,
         malesCount = malesCount ?? model.malesCount,
         femalesCount = femalesCount ?? model.femalesCount,
@@ -311,6 +323,9 @@ class Model7 extends BaseModel {
   Model7 copyWith({
     int? id,
     DateTime? at,
+    String? scanner,
+    String? streetNo,
+    String? buildingNo,
     String? registrationNo,
     String? familyHeadName,
     int? malesCount,
@@ -329,6 +344,9 @@ class Model7 extends BaseModel {
         this,
         id: id,
         at: at,
+        scanner: scanner,
+        streetNo: streetNo,
+        buildingNo: buildingNo,
         registrationNo: registrationNo,
         familyHeadName: familyHeadName,
         malesCount: malesCount,
@@ -348,6 +366,9 @@ class Model7 extends BaseModel {
     return Model7(
       id: json['id'],
       at: DateTime.parse(json['at']),
+      scanner: json['scanner'],
+      streetNo: json['streetNo'],
+      buildingNo: json['registrationNo'],
       registrationNo: json['registrationNo'],
       familyHeadName: json['familyHeadName'],
       malesCount: json['malesCount'],
@@ -367,6 +388,8 @@ class Model7 extends BaseModel {
   @override
   List<Object?> get props => super.props
     ..addAll([
+      streetNo,
+      buildingNo,
       registrationNo,
       familyHeadName,
       malesCount,

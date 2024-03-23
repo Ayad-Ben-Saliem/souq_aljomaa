@@ -40,7 +40,7 @@ dependencies:
   sqlite3: ^2.1.0
   sqlite3_flutter_libs: ^0.5.20
   path_provider: ^2.1.2
-  syncfusion_flutter_datepicker: ^24.2.3
+  syncfusion_flutter_datepicker: 24.2.3
   path_provider_linux: ^2.2.1
   path_provider_windows: ^2.2.1
   jhijri_picker: ^1.0.1
@@ -50,6 +50,11 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   dropdown_button2: ^2.3.9
   date_field: ^4.0.1
+  file_picker: ^8.0.0+1
+#  syncfusion_flutter_pdf: ^25.1.35
+  syncfusion_flutter_pdf: 24.2.8
+#  syncfusion_flutter_pdfviewer: ^25.1.35
+  syncfusion_flutter_pdfviewer: 24.2.8
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +85,7 @@ flutter:
   assets:
     - assets/images/
   #   - images/a_dot_ham.jpeg
+    - assets/pdf/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

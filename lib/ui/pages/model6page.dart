@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jhijri_picker/_src/_jWidgets.dart';
 import 'package:souq_aljomaa/main.dart';
 import 'package:souq_aljomaa/models/model6.dart';
+import 'package:souq_aljomaa/storage/file_manager.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/custom_text_field.dart';
 import 'package:souq_aljomaa/ui/home_page.dart';
@@ -257,6 +261,34 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                               ],
                             ),
                             const SizedBox(height: 32),
+                            ElevatedButton(
+                              onPressed: () async {
+                                FilePickerResult? result = await FilePicker.platform.pickFiles(dialogTitle: 'اختر صورة', type: FileType.image);
+                                if (result == null) return;
+                                ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(scanner: result.files.first.path);
+                              },
+                              child: const Text('تحميل صورة للمستند'),
+                            ),
+                            const SizedBox(height: 16),
+                            Consumer(
+                              builder: (context, ref, _) {
+                                final imagePath = ref.watch(_modelProvider.select((model) => model.scanner));
+                                if (imagePath == null || imagePath.isEmpty) return Container();
+                                return ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 256, maxHeight: 256),
+                                  child: Stack(
+                                    children: [
+                                      Image.file(File(imagePath)),
+                                      IconButton(
+                                        onPressed: () => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(scanner: ''),
+                                        icon: const Icon(Icons.delete_outline),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 32),
                             const Padding(
                               padding: EdgeInsets.all(32),
                               child: CustomText('مختار المحلة'),
@@ -299,6 +331,9 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                 model.shopNo.trim().isNotEmpty ||
                                 model.businessType.trim().isNotEmpty ||
                                 model.businessCategory.trim().isNotEmpty) {
+                              if (model.scanner?.isNotEmpty == true) {
+                                model = model.copyWith(scanner: await FileManager.saveImage(model.scanner!));
+                              }
                               modelController.save(model).then((value) {
                                 showModalBottomSheet(context: context, builder: (_) => const CustomText('تم الحفظ بنجاح'));
                                 Navigator.pop(context);
