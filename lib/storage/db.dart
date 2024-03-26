@@ -47,8 +47,7 @@ abstract class Database {
         identifierNo TEXT,
         nationalId TEXT NOT NULL,
         testimony TEXT NOT NULL,
-        date1 TEXT NOT NULL,
-        date2 TEXT
+        date TEXT NOT NULL
       )
     ''');
 
@@ -68,8 +67,7 @@ abstract class Database {
         identifierFrom TEXT,
         nationalId TEXT NOT NULL,
         testimony TEXT NOT NULL,
-        date1 TEXT NOT NULL,
-        date2 TEXT
+        date TEXT NOT NULL
       )
     ''');
 
@@ -89,8 +87,7 @@ abstract class Database {
         identifierFrom TEXT,
         nationalId TEXT NOT NULL,
         testimony TEXT NOT NULL,
-        date1 TEXT NOT NULL,
-        date2 TEXT
+        date TEXT NOT NULL
       )
     ''');
 
@@ -110,8 +107,7 @@ abstract class Database {
         identifierFrom TEXT,
         nationalId TEXT NOT NULL,
         testimony TEXT NOT NULL,
-        date1 TEXT NOT NULL,
-        date2 TEXT
+        date TEXT NOT NULL
       )
     ''');
 
@@ -137,8 +133,7 @@ abstract class Database {
         issueDate TEXT NOT NULL,
         residence TEXT NOT NULL,
         nearestPoint TEXT NOT NULL,
-        date1 TEXT NOT NULL,
-        date2 TEXT
+        date TEXT NOT NULL
       )
     ''');
 
@@ -306,9 +301,8 @@ abstract class Database {
         identifierNo,
         nationalId,
         testimony,
-        date1,
-        date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
@@ -324,8 +318,7 @@ abstract class Database {
         model.identifierNo,
         model.nationalId,
         model.testimony,
-        model.date1,
-        model.date2,
+        model.date.toIso8601String(),
       ],
     );
 
@@ -382,9 +375,8 @@ abstract class Database {
         identifierFrom,
         nationalId,
         testimony,
-        date1,
-        date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
@@ -400,8 +392,7 @@ abstract class Database {
         model.identifierFrom,
         model.nationalId,
         model.testimony,
-        model.date1,
-        model.date2,
+        model.date.toIso8601String(),
       ],
     );
 
@@ -458,9 +449,8 @@ abstract class Database {
         identifierFrom,
         nationalId,
         testimony,
-        date1,
-        date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
@@ -476,8 +466,7 @@ abstract class Database {
         model.identifierFrom,
         model.nationalId,
         model.testimony,
-        model.date1,
-        model.date2,
+        model.date.toIso8601String(),
       ],
     );
 
@@ -533,9 +522,8 @@ abstract class Database {
         identifierFrom,
         nationalId,
         testimony,
-        date1,
-        date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
@@ -551,8 +539,7 @@ abstract class Database {
         model.identifierFrom,
         model.nationalId,
         model.testimony,
-        model.date1,
-        model.date2,
+        model.date.toIso8601String(),
       ],
     );
 
@@ -613,9 +600,8 @@ abstract class Database {
         issueDate,
         residence,
         nearestPoint,
-        date1,
-        date2
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
@@ -636,8 +622,7 @@ abstract class Database {
         model.issueDate,
         model.residence,
         model.nearestPoint,
-        model.date1,
-        model.date2,
+        model.date.toIso8601String(),
       ],
     );
 
@@ -749,7 +734,7 @@ abstract class Database {
     final disabilities = jsonEncoder.convert(model.disabilities?.toJson());
     final lowIncome = jsonEncoder.convert([for (final lowIncome in model.lowIncome) lowIncome.toJson()]);
     final unemployed = jsonEncoder.convert([for (final unemployed in model.unemployed) unemployed.toJson()]);
-    final formFiller = jsonEncoder.convert(model.formFiller?.toJson());
+    final formFiller = jsonEncoder.convert(model.formFiller.toJson());
 
     _db.execute(
       '''

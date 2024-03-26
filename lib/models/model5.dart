@@ -1,5 +1,7 @@
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/utils.dart';
+import 'package:jhijri/jHijri.dart';
+import 'package:intl/intl.dart';
 
 class Model5 extends BaseModel {
   @override
@@ -33,8 +35,7 @@ class Model5 extends BaseModel {
   final String residence;
   final String nearestPoint;
 
-  final String date1;
-  final String? date2;
+  final DateTime date;
 
   const Model5({
     super.id,
@@ -56,8 +57,7 @@ class Model5 extends BaseModel {
     required this.issueDate,
     required this.residence,
     required this.nearestPoint,
-    required this.date1,
-    this.date2,
+    required this.date,
   });
 
   Model5.copyWith(
@@ -81,8 +81,7 @@ class Model5 extends BaseModel {
     String? issueDate,
     String? residence,
     String? nearestPoint,
-    String? date1,
-    String? date2,
+    DateTime? date,
   })  : locality = locality ?? model.locality,
         witness = witness ?? model.witness,
         responsible = responsible ?? model.responsible,
@@ -99,8 +98,7 @@ class Model5 extends BaseModel {
         issueDate = issueDate ?? model.issueDate,
         residence = residence ?? model.residence,
         nearestPoint = nearestPoint ?? model.nearestPoint,
-        date1 = date1 ?? model.date1,
-        date2 = date2 ?? model.date2,
+        date = date ?? model.date,
         super.copyWith();
 
   Model5 copyWith({
@@ -123,8 +121,7 @@ class Model5 extends BaseModel {
     String? issueDate,
     String? residence,
     String? nearestPoint,
-    String? date1,
-    String? date2,
+    DateTime? date,
   }) =>
       Model5.copyWith(
         this,
@@ -147,8 +144,7 @@ class Model5 extends BaseModel {
         issueDate: issueDate,
         residence: residence,
         nearestPoint: nearestPoint,
-        date1: date1,
-        date2: date2,
+        date: date,
       );
 
   factory Model5.fromJson(JsonMap json) {
@@ -172,12 +168,17 @@ class Model5 extends BaseModel {
       issueDate: json['issueDate'],
       residence: json['residence'],
       nearestPoint: json['nearestPoint'],
-      date1: json['date1'],
-      date2: json['date2'],
+      date: DateTime.parse(json['date']),
     );
   }
 
   String get fullName => '$firstName $fatherName $grandfatherName $lastName';
+
+  String formattedDate([String? format = 'yyyy/MM/dd', String? locale]) {
+    return DateFormat(format, locale).format(date);
+  }
+
+  HijriDate? get hijriDate => HijriDate.dateToHijri(date);
 
   @override
   List<Object?> get props => super.props
@@ -198,7 +199,6 @@ class Model5 extends BaseModel {
       issueDate,
       residence,
       nearestPoint,
-      date1,
-      date2,
+      date,
     ]);
 }

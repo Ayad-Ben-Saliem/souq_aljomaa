@@ -70,15 +70,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(child: Image.asset('assets/images/حكومة الوحدة الوطنية.jpg')),
-                                SizedBox(height: 128, child: Image.asset('assets/images/Government_logo.png')),
-                                Expanded(child: Image.asset('assets/images/وزارة الحكم المحلي.jpg')),
-                              ],
-                            ),
-                            const CustomText('بلدية سوق الجمعة'),
+                            Image.asset('assets/images/header.jpg'),
                             const SizedBox(height: 16),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -465,15 +457,6 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                       builder: (context, ref, child) {
                         return ElevatedButton(
                           onPressed: () async {
-                            Scaffold.of(context).showBottomSheet(
-                              (_) => const SizedBox(
-                                height: 64,
-                                width: 256,
-                                child: Center(child: CustomText('تم الحفظ بنجاح')),
-                              ),
-                            );
-                            WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pop(context));
-
                             if (_formKey.currentState?.validate() == true) {
                               var model = ref.read(_modelProvider);
                               if (model.streetNo.trim().isNotEmpty ||
@@ -487,9 +470,10 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                 }
                                 modelController.save(model).then((value) {
                                   Navigator.pop(context);
-                                  showModalBottomSheet(context: context, builder: (_) => const CustomText('تم الحفظ بنجاح'));
-                                  // TODO: reload list in home page
-                                  // ref.invalidate(allModels);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: CustomText('تم الحفظ بنجاح')));
+
+                                  HomePage.refresh(ref);
                                 });
                               }
                             }

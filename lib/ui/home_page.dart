@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:printing/printing.dart';
 import 'package:souq_aljomaa/controllers/model_controller.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/models/model1.dart';
@@ -10,6 +13,7 @@ import 'package:souq_aljomaa/models/model4.dart';
 import 'package:souq_aljomaa/models/model5.dart';
 import 'package:souq_aljomaa/models/model6.dart';
 import 'package:souq_aljomaa/models/model7.dart';
+import 'package:souq_aljomaa/pdf/pdf_manager.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/pages/model1page.dart';
 import 'package:souq_aljomaa/ui/pages/model2page.dart';
@@ -24,11 +28,20 @@ final modelController = ModelController();
 
 final searchText = StateProvider((ref) => '');
 
+final currentModel = StateProvider<BaseModel?>((ref) => null);
+
+final refreshProvider = StateProvider((ref) => 0);
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
+
+  static void refresh(WidgetRef ref) {
+    final refreshState = ref.read(refreshProvider);
+    ref.read(refreshProvider.notifier).state = refreshState + 1;
+  }
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
@@ -67,6 +80,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(refreshProvider, (previous, next) => _pagingController.refresh());
     return Scaffold(
       body: Row(
         children: [
@@ -103,8 +117,34 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
           ),
-          // Expanded(child: SfPdfViewer.asset('assets/pdf/dummy.pdf')),
-          Expanded(child: SfPdfViewer.network('https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf')),
+          const VerticalDivider(),
+          Expanded(
+            child: Consumer(
+              builder: (context, ref, _) {
+                final model = ref.watch(currentModel);
+                if (model == null) return const Center(child: Text('اختر نموذج لعرضه', style: TextStyle(fontSize: 24)));
+                if (Platform.isLinux) {
+                  return PdfPreview(
+                    build: (format) => PdfManager.getDocument(model, format),
+                  );
+                }
+                return FutureBuilder(
+                  future: PdfManager.getDocument(model),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.active:
+                      case ConnectionState.waiting:
+                        return const CircularProgressIndicator();
+                      case ConnectionState.done:
+                        return SfPdfViewer.memory(snapshot.requireData);
+                      case ConnectionState.none:
+                        return Container();
+                    }
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -210,22 +250,33 @@ class ModelListTile extends StatelessWidget {
       throw Exception('Not implemented model');
     }
 
-    return InkWell(
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomText(title),
+    return Consumer(
+      builder: (context, ref, _) {
+        return InkWell(
+          child: ListTile(
+            title: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomText(title),
+            ),
+            trailing: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 200),
+              child: Text(trailing, style: const TextStyle(fontSize: 16)),
+            ),
+            selected: ref.watch(currentModel) == model,
+            selectedTileColor: Colors.blue,
+            selectedColor: Colors.white,
           ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 200), child: Text(trailing, style: const TextStyle(fontSize: 15))),
-          ),
-        ],
-      ),
-      onDoubleTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => editPage));
+          onDoubleTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => editPage));
+          },
+          onTap: () {
+            if (ref.read(currentModel) == model) {
+              ref.read(currentModel.notifier).state = null;
+            } else {
+              ref.read(currentModel.notifier).state = model;
+            }
+          },
+        );
       },
     );
   }

@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jhijri_picker/_src/_jWidgets.dart';
-import 'package:souq_aljomaa/main.dart';
 import 'package:souq_aljomaa/models/model6.dart';
 import 'package:souq_aljomaa/storage/file_manager.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
@@ -71,15 +69,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(child: Image.asset('assets/images/حكومة الوحدة الوطنية.jpg')),
-                                SizedBox(height: 128, child: Image.asset('assets/images/Government_logo.png')),
-                                Expanded(child: Image.asset('assets/images/وزارة الحكم المحلي.jpg')),
-                              ],
-                            ),
-                            const CustomText('بلدية سوق الجمعة'),
+                            Image.asset('assets/images/header.jpg'),
                             const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -312,15 +302,6 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                     child: Consumer(builder: (context, ref, child) {
                       return ElevatedButton(
                         onPressed: () async {
-                          Scaffold.of(context).showBottomSheet(
-                            (_) => const SizedBox(
-                              height: 64,
-                              width: 256,
-                              child: Center(child: CustomText('تم الحفظ بنجاح')),
-                            ),
-                          );
-                          WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pop(context));
-
                           if (_formKey.currentState?.validate() == true) {
                             var model = ref.read(_modelProvider);
                             if (model.ownerName.trim().isNotEmpty ||
@@ -335,10 +316,11 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                 model = model.copyWith(scanner: await FileManager.saveImage(model.scanner!));
                               }
                               modelController.save(model).then((value) {
-                                showModalBottomSheet(context: context, builder: (_) => const CustomText('تم الحفظ بنجاح'));
                                 Navigator.pop(context);
-                                // TODO: reload list in home page
-                                // ref.invalidate(allModels);
+
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: CustomText('تم الحفظ بنجاح')));
+
+                                HomePage.refresh(ref);
                               });
                             }
                           }

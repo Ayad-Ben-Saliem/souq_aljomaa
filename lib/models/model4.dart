@@ -1,5 +1,7 @@
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/utils.dart';
+import 'package:jhijri/jHijri.dart';
+import 'package:intl/intl.dart';
 
 class Model4 extends BaseModel {
   @override
@@ -28,8 +30,7 @@ class Model4 extends BaseModel {
 
   final String testimony;
 
-  final String date1;
-  final String? date2;
+  final DateTime date;
 
   const Model4({
     super.id,
@@ -46,8 +47,7 @@ class Model4 extends BaseModel {
     this.identifierFrom,
     required this.nationalId,
     required this.testimony,
-    required this.date1,
-    this.date2,
+    required this.date,
   });
 
   Model4.copyWith(
@@ -66,8 +66,7 @@ class Model4 extends BaseModel {
     String? identifierFrom,
     String? nationalId,
     String? testimony,
-    String? date1,
-    String? date2,
+    DateTime? date,
   })  : locality = locality ?? model.locality,
         witness = witness ?? model.witness,
         responsible = responsible ?? model.responsible,
@@ -79,8 +78,7 @@ class Model4 extends BaseModel {
         identifierFrom = identifierFrom ?? model.identifierFrom,
         nationalId = nationalId ?? model.nationalId,
         testimony = testimony ?? model.testimony,
-        date1 = date1 ?? model.date1,
-        date2 = date2 ?? model.date2,
+        date = date ?? model.date,
         super.copyWith();
 
   Model4 copyWith({
@@ -98,8 +96,7 @@ class Model4 extends BaseModel {
     String? identifierFrom,
     String? nationalId,
     String? testimony,
-    String? date1,
-    String? date2,
+    DateTime? date,
   }) =>
       Model4.copyWith(
         this,
@@ -117,8 +114,7 @@ class Model4 extends BaseModel {
         identifierFrom: identifierFrom,
         nationalId: nationalId,
         testimony: testimony,
-        date1: date1,
-        date2: date2,
+        date: date,
       );
 
   factory Model4.fromJson(JsonMap json) {
@@ -137,12 +133,17 @@ class Model4 extends BaseModel {
       identifierFrom: json['identifierFrom'],
       nationalId: json['nationalId'],
       testimony: json['testimony'],
-      date1: json['date1'],
-      date2: json['date2'],
+      date: DateTime.parse(json['date']),
     );
   }
 
   String get fullName => '$firstName $fatherName $grandfatherName $lastName';
+
+  String formattedDate([String? format = 'yyyy/MM/dd', String? locale]) {
+    return DateFormat(format, locale).format(date);
+  }
+
+  HijriDate? get hijriDate => HijriDate.dateToHijri(date);
 
   @override
   List<Object?> get props => super.props
@@ -158,7 +159,6 @@ class Model4 extends BaseModel {
       identifierFrom,
       nationalId,
       testimony,
-      date1,
-      date2,
+      date,
     ]);
 }

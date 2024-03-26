@@ -51,10 +51,9 @@ dependencies:
   dropdown_button2: ^2.3.9
   date_field: ^4.0.1
   file_picker: ^8.0.0+1
-#  syncfusion_flutter_pdf: ^25.1.35
-  syncfusion_flutter_pdf: 24.2.8
-#  syncfusion_flutter_pdfviewer: ^25.1.35
-  syncfusion_flutter_pdfviewer: 24.2.8
+  syncfusion_flutter_pdfviewer: 24.2.6
+  printing: ^5.12.0
+  pdf: ^3.10.8
 
 dev_dependencies:
   flutter_test:
@@ -104,11 +103,11 @@ flutter:
         - asset: assets/fonts/Harf-Fannan.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
+    - family: Arial
+      fonts:
+       - asset: assets/fonts/arial/arial.ttf
+       - asset: assets/fonts/arial/arial-bold.ttf
+#         weight: 700
+      #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

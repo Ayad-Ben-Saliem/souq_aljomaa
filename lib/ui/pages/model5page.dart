@@ -14,11 +14,9 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 final _modelProvider = StateProvider((ref) => _initialValue);
 
-final _dateProvider = StateProvider((ref) => DateTime.now());
-
 final _formKey = GlobalKey<FormState>();
 
-var _initialValue = const Model5(
+var _initialValue = Model5(
   locality: '',
   witness: '',
   responsible: '',
@@ -35,8 +33,7 @@ var _initialValue = const Model5(
   issueDate: '',
   residence: '',
   nearestPoint: '',
-  date1: '',
-  date2: '',
+  date: DateTime.now(),
 );
 
 class Model5Page extends ConsumerStatefulWidget {
@@ -90,22 +87,14 @@ class _Model5PageState extends ConsumerState<Model5Page> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(child: Image.asset('assets/images/حكومة الوحدة الوطنية.jpg')),
-                                SizedBox(height: 128, child: Image.asset('assets/images/Government_logo.png')),
-                                Expanded(child: Image.asset('assets/images/وزارة الحكم المحلي.jpg')),
-                              ],
-                            ),
-                            const CustomText('بلدية سوق الجمعة'),
+                            Image.asset('assets/images/header.jpg'),
                             const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const CustomText('محلة: '),
                                 ConstrainedBox(
-                                  constraints: const BoxConstraints(maxWidth: 256),
+                                  constraints: const BoxConstraints(maxWidth: 128),
                                   child: Consumer(
                                     builder: (context, ref, child) {
                                       return CustomTextFormField(
@@ -378,29 +367,32 @@ class _Model5PageState extends ConsumerState<Model5Page> {
                                     const CustomText('التاريخ (هجري)'),
                                     ConstrainedBox(
                                       constraints: const BoxConstraints(maxWidth: 256),
-                                      child: Consumer(builder: (context, ref, child) {
-                                        return JGlobalDatePicker(
-                                          widgetType: WidgetType.JContainer,
-                                          pickerType: PickerType.JHijri,
-                                          buttons: const SizedBox(),
-                                          primaryColor: Theme.of(context).colorScheme.primary,
-                                          calendarTextColor: Theme.of(context).colorScheme.onBackground,
-                                          backgroundColor: Theme.of(context).colorScheme.background,
-                                          borderRadius: const Radius.circular(10),
-                                          headerTitle: const Center(
-                                            child: Text("التقويم الهجري"),
-                                          ),
-                                          startDate: JDateModel(dateTime: DateTime.parse("1984-12-24")),
-                                          selectedDate: JDateModel(dateTime: ref.watch(_dateProvider)),
-                                          endDate: JDateModel(dateTime: DateTime.parse("2030-09-20")),
-                                          pickerMode: DatePickerMode.day,
-                                          pickerTheme: Theme.of(context),
-                                          textDirection: TextDirection.rtl,
-                                          onChange: (val) {
-                                            ref.read(_dateProvider.notifier).state = val.date;
-                                          },
-                                        );
-                                      }),
+                                      child: Consumer(
+                                        builder: (context, ref, child) {
+                                          return JGlobalDatePicker(
+                                            widgetType: WidgetType.JContainer,
+                                            pickerType: PickerType.JHijri,
+                                            buttons: const SizedBox(),
+                                            primaryColor: Theme.of(context).colorScheme.primary,
+                                            calendarTextColor: Theme.of(context).colorScheme.onBackground,
+                                            backgroundColor: Theme.of(context).colorScheme.background,
+                                            borderRadius: const Radius.circular(10),
+                                            headerTitle: const Center(
+                                              child: Text("التقويم الهجري"),
+                                            ),
+                                            startDate: JDateModel(dateTime: DateTime.parse("1984-12-24")),
+                                            selectedDate: JDateModel(dateTime: ref.watch(_modelProvider.select((model) => model.date))),
+                                            endDate: JDateModel(dateTime: DateTime.parse("2030-09-20")),
+                                            pickerMode: DatePickerMode.day,
+                                            pickerTheme: Theme.of(context),
+                                            textDirection: TextDirection.rtl,
+                                            onChange: (val) {
+                                              final model = ref.read(_modelProvider);
+                                              ref.read(_modelProvider.notifier).state = model.copyWith(date: val.date);
+                                            },
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -409,14 +401,17 @@ class _Model5PageState extends ConsumerState<Model5Page> {
                                     const CustomText('الموافق (ميلادي)'),
                                     ConstrainedBox(
                                       constraints: const BoxConstraints(maxWidth: 256),
-                                      child: Consumer(builder: (context, ref, child) {
-                                        return SfDateRangePicker(
-                                          initialSelectedDate: ref.watch(_dateProvider),
-                                          onSelectionChanged: (selection) {
-                                            ref.read(_dateProvider.notifier).state = selection.value;
-                                          },
-                                        );
-                                      }),
+                                      child: Consumer(
+                                        builder: (context, ref, child) {
+                                          return SfDateRangePicker(
+                                            initialSelectedDate: ref.watch(_modelProvider.select((model) => model.date)),
+                                            onSelectionChanged: (selection) {
+                                              final model = ref.read(_modelProvider);
+                                              ref.read(_modelProvider.notifier).state = model.copyWith(date: selection.value);
+                                            },
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -474,15 +469,6 @@ class _Model5PageState extends ConsumerState<Model5Page> {
                     child: Consumer(builder: (context, ref, child) {
                       return ElevatedButton(
                         onPressed: () async {
-                          Scaffold.of(context).showBottomSheet(
-                            (_) => const SizedBox(
-                              height: 64,
-                              width: 256,
-                              child: Center(child: CustomText('تم الحفظ بنجاح')),
-                            ),
-                          );
-                          WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pop(context));
-
                           if (_formKey.currentState?.validate() == true) {
                             var model = ref.read(_modelProvider);
                             if (model.locality.trim().isNotEmpty ||
@@ -494,21 +480,16 @@ class _Model5PageState extends ConsumerState<Model5Page> {
                                 model.lastName.trim().isNotEmpty ||
                                 model.motherName.trim().isNotEmpty ||
                                 model.nationalId.trim().isNotEmpty ||
-                                model.residence.trim().isNotEmpty ||
-                                model.date1.isNotEmpty) {
+                                model.residence.trim().isNotEmpty) {
                               if (model.scanner?.isNotEmpty == true) {
                                 model = model.copyWith(scanner: await FileManager.saveImage(model.scanner!));
                               }
-                              model = model.copyWith(
-                                date1: ref.read(_dateProvider).toString(),
-                                date2: JDateModel(dateTime: ref.read(_dateProvider)).jhijri?.fullDate,
-                              );
-
                               modelController.save(model).then((value) {
-                                showModalBottomSheet(context: context, builder: (_) => const CustomText('تم الحفظ بنجاح'));
                                 Navigator.pop(context);
-                                // TODO: reload list in home page
-                                // ref.invalidate(allModels);
+
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: CustomText('تم الحفظ بنجاح')));
+
+                                HomePage.refresh(ref);
                               });
 
                               sharedPreferences.setString('locality', model.locality);
