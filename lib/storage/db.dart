@@ -328,8 +328,45 @@ abstract class Database {
   static Future<Model1> _editModel1(Model1 model) async {
     assert(model.id != null, "Null id, can't edit");
 
-    throw Exception('Not implemented yet');
-    // TODO
+    _db.execute(
+      '''
+      UPDATE Model1
+      SET 
+        at = ?,
+        scanner = ?,
+        locality = ?,
+        witness = ?,
+        responsible = ?,
+        firstName = ?,
+        fatherName = ?,
+        grandfatherName = ?,
+        lastName = ?,
+        motherName = ?,
+        identifierNo = ?,
+        nationalId = ?,
+        testimony = ?,
+        date = ?
+      WHERE
+        id = ?;
+      ''',
+      [
+        model.at!.toIso8601String(),
+        model.scanner,
+        model.locality,
+        model.witness,
+        model.responsible,
+        model.firstName,
+        model.fatherName,
+        model.grandfatherName,
+        model.lastName,
+        model.motherName,
+        model.identifierNo,
+        model.nationalId,
+        model.testimony,
+        model.date.toIso8601String(),
+        model.id,
+      ],
+    );
 
     return model;
   }
@@ -402,8 +439,45 @@ abstract class Database {
   static Future<Model2> _editModel2(Model2 model) async {
     assert(model.id != null, "Null id, can't edit");
 
-    throw Exception('Not implemented yet');
-    // TODO
+    _db.execute(
+      '''
+      UPDATE Model2
+      SET 
+        at = ?,
+        scanner = ?,
+        locality = ?,
+        witness = ?,
+        responsible = ?,
+        firstName = ?,
+        fatherName = ?,
+        grandfatherName = ?,
+        lastName = ?,
+        identifierNo = ?,
+        identifierFrom = ?,
+        nationalId = ?,
+        testimony = ?,
+        date = ?
+      WHERE
+        id = ?;
+      ''',
+      [
+        model.at!.toIso8601String(),
+        model.scanner,
+        model.locality,
+        model.witness,
+        model.responsible,
+        model.firstName,
+        model.fatherName,
+        model.grandfatherName,
+        model.lastName,
+        model.identifierNo,
+        model.identifierFrom,
+        model.nationalId,
+        model.testimony,
+        model.date.toIso8601String(),
+        model.id,
+      ],
+    );
 
     return model;
   }
@@ -476,7 +550,45 @@ abstract class Database {
   static Future<Model3> _editModel3(Model3 model) async {
     assert(model.id != null, "Null id, can't edit");
 
-    // TODO
+    _db.execute(
+      '''
+      UPDATE Model3
+      SET 
+        at = ?,
+        scanner = ?,
+        locality = ?,
+        witness = ?,
+        responsible = ?,
+        firstName = ?,
+        fatherName = ?,
+        grandfatherName = ?,
+        lastName = ?,
+        identifierNo = ?,
+        identifierFrom = ?,
+        nationalId = ?,
+        testimony = ?,
+        date = ?
+      WHERE
+        id = ?;
+      ''',
+      [
+        model.at!.toIso8601String(),
+        model.scanner,
+        model.locality,
+        model.witness,
+        model.responsible,
+        model.firstName,
+        model.fatherName,
+        model.grandfatherName,
+        model.lastName,
+        model.identifierNo,
+        model.identifierFrom,
+        model.nationalId,
+        model.testimony,
+        model.date.toIso8601String(),
+        model.id,
+      ],
+    );
 
     return model;
   }
@@ -549,7 +661,45 @@ abstract class Database {
   static Future<Model4> _editModel4(Model4 model) async {
     assert(model.id != null, "Null id, can't edit");
 
-    // TODO
+    _db.execute(
+      '''
+      UPDATE Model4
+      SET 
+        at = ?,
+        scanner = ?,
+        locality = ?,
+        witness = ?,
+        responsible = ?,
+        firstName = ?,
+        fatherName = ?,
+        grandfatherName = ?,
+        lastName = ?,
+        identifierNo = ?,
+        identifierFrom = ?,
+        nationalId = ?,
+        testimony = ?,
+        date = ?
+      WHERE
+        id = ?;
+      ''',
+      [
+        model.at!.toIso8601String(),
+        model.scanner,
+        model.locality,
+        model.witness,
+        model.responsible,
+        model.firstName,
+        model.fatherName,
+        model.grandfatherName,
+        model.lastName,
+        model.identifierNo,
+        model.identifierFrom,
+        model.nationalId,
+        model.testimony,
+        model.date.toIso8601String(),
+        model.id,
+      ],
+    );
 
     return model;
   }
@@ -632,7 +782,55 @@ abstract class Database {
   static Future<Model5> _editModel5(Model5 model) async {
     assert(model.id != null, "Null id, can't edit");
 
-    // TODO
+    _db.execute(
+      '''
+      UPDATE Model3
+      SET 
+        at = ?,
+        scanner = ?,
+        locality = ?,
+        witness = ?,
+        responsible = ?,
+        firstName = ?,
+        fatherName = ?,
+        grandfatherName = ?,
+        lastName = ?,
+        motherName = ?,
+        identifierNo = ?,
+        nationalId = ?,
+        familyBookletNumber = ?,
+        familyDocumentNumber = ?,
+        issuePlace = ?,
+        issueDate = ?,
+        residence = ?,
+        nearestPoint = ?,
+        date = ?
+      WHERE
+        id = ?;
+      ''',
+      [
+        model.at!.toIso8601String(),
+        model.scanner,
+        model.locality,
+        model.witness,
+        model.responsible,
+        model.firstName,
+        model.fatherName,
+        model.grandfatherName,
+        model.lastName,
+        model.motherName,
+        model.identifierNo,
+        model.nationalId,
+        model.familyBookletNumber,
+        model.familyDocumentNumber,
+        model.issuePlace,
+        model.issueDate,
+        model.residence,
+        model.nearestPoint,
+        model.date.toIso8601String(),
+        model.id,
+      ],
+    );
 
     return model;
   }
@@ -698,7 +896,37 @@ abstract class Database {
   static Future<Model6> _editModel6(Model6 model) async {
     assert(model.id != null, "Null id, can't edit");
 
-    // TODO
+    _db.execute(
+      '''
+      UPDATE Model3
+      SET 
+        at = ?,
+        scanner = ?,
+        ownerName = ?,
+        ownerPhone = ?,
+        tenantName = ?,
+        tenantPhone = ?,
+        streetCode = ?,
+        shopNo = ?,
+        businessType = ?,
+        businessCategory = ?
+      WHERE
+        id = ?;
+      ''',
+      [
+        model.at!.toIso8601String(),
+        model.scanner,
+        model.ownerName,
+        model.ownerPhone,
+        model.tenantName,
+        model.tenantPhone,
+        model.streetCode,
+        model.shopNo,
+        model.businessType,
+        model.businessCategory,
+        model.id,
+      ],
+    );
 
     return model;
   }
@@ -785,7 +1013,59 @@ abstract class Database {
   static Future<Model7> _editModel7(Model7 model) async {
     assert(model.id != null, "Null id, can't edit");
 
-    // TODO
+    const jsonEncoder = JsonEncoder();
+    final widows = jsonEncoder.convert([for (final widow in model.widows) widow.toJson()]);
+    final divorced = jsonEncoder.convert([for (final divorced in model.divorced) divorced.toJson()]);
+    final disabilities = jsonEncoder.convert(model.disabilities?.toJson());
+    final lowIncome = jsonEncoder.convert([for (final lowIncome in model.lowIncome) lowIncome.toJson()]);
+    final unemployed = jsonEncoder.convert([for (final unemployed in model.unemployed) unemployed.toJson()]);
+    final formFiller = jsonEncoder.convert(model.formFiller.toJson());
+
+    _db.execute(
+      '''
+      UPDATE Model3
+      SET 
+        at = ?,
+        scanner = ?,
+        streetNo = ?,
+        buildingNo = ?,
+        registrationNo = ?,
+        familyHeadName = ?,
+        malesCount = ?,
+        femalesCount = ?,
+        widows = ?,
+        divorced = ?,
+        disabilities = ?,
+        lowIncome = ?,
+        unemployed = ?,
+        familyHeadDeathDate = ?,
+        currentFamilyHeadName = ?,
+        formFiller = ?,
+        notes = ?
+      WHERE
+        id = ?;
+      ''',
+      [
+        model.at!.toIso8601String(),
+        model.scanner,
+        model.streetNo,
+        model.buildingNo,
+        model.registrationNo,
+        model.familyHeadName,
+        model.malesCount,
+        model.femalesCount,
+        widows,
+        divorced,
+        disabilities,
+        lowIncome,
+        unemployed,
+        model.familyHeadDeathDate,
+        model.currentFamilyHeadName,
+        formFiller,
+        model.notes,
+        model.id,
+      ],
+    );
 
     return model;
   }

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/utils.dart';
@@ -133,6 +131,9 @@ enum LowIncomeType {
 
     throw Exception('Type not supported');
   }
+
+  @override
+  String toString() => name;
 }
 
 class Unemployed extends Equatable {
@@ -180,6 +181,9 @@ enum Qualification {
     }
     throw Exception('Invalid qualification ($value)');
   }
+
+  @override
+  String toString() => name;
 }
 
 enum Gender {
@@ -196,6 +200,9 @@ enum Gender {
     }
     throw Exception('Invalid qualification ($value)');
   }
+
+  @override
+  String toString() => name;
 }
 
 class FormFiller extends Equatable {
