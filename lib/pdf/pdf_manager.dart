@@ -23,7 +23,7 @@ Uint8List? stamp4ImageData;
 Uint8List? stamp5ImageData;
 
 abstract class PdfManager {
-  static Future<Uint8List> getDocument(BaseModel model, [PdfPageFormat? format]) async {
+  static Future<Uint8List> getDocument(BaseModel model) async {
     harfFannanFont ??= pw.Font.ttf(await rootBundle.load("assets/fonts/Harf-Fannan.ttf"));
     harfFannanFontBold ??= pw.Font.ttf(await rootBundle.load("assets/fonts/Harf-Fannan.ttf"));
 

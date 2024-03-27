@@ -32,6 +32,10 @@ final currentModel = StateProvider<BaseModel?>((ref) => null);
 
 final refreshProvider = StateProvider((ref) => 0);
 
+final controller = StateProvider((ref) => PdfViewerController());
+
+final fitWidth = StateProvider((ref) => false);
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -124,9 +128,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 final model = ref.watch(currentModel);
                 if (model == null) return const Center(child: Text('اختر نموذج لعرضه', style: TextStyle(fontSize: 24)));
                 if (Platform.isLinux) {
-                  return PdfPreview(
-                    build: (format) => PdfManager.getDocument(model, format),
-                  );
+                  return PdfPreview(build: (format) => PdfManager.getDocument(model));
                 }
                 return FutureBuilder(
                   future: PdfManager.getDocument(model),
@@ -136,7 +138,63 @@ class _HomePageState extends ConsumerState<HomePage> {
                       case ConnectionState.waiting:
                         return const CircularProgressIndicator();
                       case ConnectionState.done:
-                        return SfPdfViewer.memory(snapshot.requireData);
+                        final bytes = snapshot.requireData;
+                        return Column(
+                          children: [
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes),
+                                  icon: const Icon(Icons.print_outlined),
+                                ),
+                                const SizedBox(width: 16),
+                                IconButton(
+                                  onPressed: () => Printing.sharePdf(bytes: bytes),
+                                  icon: const Icon(Icons.share),
+                                ),
+                                const SizedBox(width: 16),
+                                Consumer(
+                                  builder: (context, ref, child) {
+                                    return IconButton(
+                                      onPressed: () {
+                                        // reset zoomLevel
+                                        ref.read(controller).zoomLevel = 1;
+                                        ref.read(fitWidth.notifier).state = !ref.read(fitWidth);
+                                      },
+                                      icon: Icon(ref.watch(fitWidth) ? Icons.zoom_in_map : Icons.zoom_out_map),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 16),
+                                IconButton(
+                                  onPressed: () => ref.read(controller).zoomLevel = ref.read(controller).zoomLevel + 0.1,
+                                  icon: const Icon(Icons.zoom_in),
+                                ),
+                                const SizedBox(width: 16),
+                                IconButton(
+                                  onPressed: () => ref.read(controller).zoomLevel = ref.read(controller).zoomLevel - 0.1,
+                                  icon: const Icon(Icons.zoom_out),
+                                ),
+                              ],
+                            ),
+                            const Divider(),
+                            Flexible(
+                              child: Consumer(
+                                builder: (context, ref, _) {
+                                  final pdfViewer = SfPdfViewer.memory(bytes, controller: ref.read(controller));
+
+                                  if (ref.watch((fitWidth))) return pdfViewer;
+                                  return LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return AspectRatio(aspectRatio: 0.70710678118, child: pdfViewer);
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+
                       case ConnectionState.none:
                         return Container();
                     }
