@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,7 +59,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       final models = await modelController.search(
         limit: _pageSize,
         offset: pageKey,
-        searchOptions: SearchOptions(ref.watch(searchText)),
+        searchOptions: SearchOptions(ref.read(searchText)),
       );
       if (models.isEmpty) {
         _pagingController.appendLastPage(models.toList());
@@ -85,6 +86,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     ref.listen(refreshProvider, (previous, next) => _pagingController.refresh());
+    ref.listen(searchText, (previous, next) => _pagingController.refresh());
     return Scaffold(
       body: Row(
         children: [
@@ -136,65 +138,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                     switch (snapshot.connectionState) {
                       case ConnectionState.active:
                       case ConnectionState.waiting:
-                        return const CircularProgressIndicator();
+                        return const Center(child: CircularProgressIndicator());
                       case ConnectionState.done:
                         final bytes = snapshot.requireData;
-                        return Column(
-                          children: [
-                            Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes),
-                                  icon: const Icon(Icons.print_outlined),
-                                ),
-                                const SizedBox(width: 16),
-                                IconButton(
-                                  onPressed: () => Printing.sharePdf(bytes: bytes),
-                                  icon: const Icon(Icons.share),
-                                ),
-                                const SizedBox(width: 16),
-                                Consumer(
-                                  builder: (context, ref, child) {
-                                    return IconButton(
-                                      onPressed: () {
-                                        // reset zoomLevel
-                                        ref.read(controller).zoomLevel = 1;
-                                        ref.read(fitWidth.notifier).state = !ref.read(fitWidth);
-                                      },
-                                      icon: Icon(ref.watch(fitWidth) ? Icons.zoom_in_map : Icons.zoom_out_map),
-                                    );
-                                  },
-                                ),
-                                const SizedBox(width: 16),
-                                IconButton(
-                                  onPressed: () => ref.read(controller).zoomLevel = ref.read(controller).zoomLevel + 0.1,
-                                  icon: const Icon(Icons.zoom_in),
-                                ),
-                                const SizedBox(width: 16),
-                                IconButton(
-                                  onPressed: () => ref.read(controller).zoomLevel = ref.read(controller).zoomLevel - 0.1,
-                                  icon: const Icon(Icons.zoom_out),
-                                ),
-                              ],
-                            ),
-                            const Divider(),
-                            Flexible(
-                              child: Consumer(
-                                builder: (context, ref, _) {
-                                  final pdfViewer = SfPdfViewer.memory(bytes, controller: ref.read(controller));
-
-                                  if (ref.watch((fitWidth))) return pdfViewer;
-                                  return LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      return AspectRatio(aspectRatio: 0.70710678118, child: pdfViewer);
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-
+                        return _pdfPage(bytes);
                       case ConnectionState.none:
                         return Container();
                     }
@@ -249,6 +196,64 @@ class _HomePageState extends ConsumerState<HomePage> {
         backgroundColor: Colors.green,
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Widget _pdfPage(Uint8List bytes) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            IconButton(
+              onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes),
+              icon: const Icon(Icons.print_outlined),
+            ),
+            const SizedBox(width: 16),
+            IconButton(
+              onPressed: () => Printing.sharePdf(bytes: bytes),
+              icon: const Icon(Icons.share),
+            ),
+            const SizedBox(width: 16),
+            Consumer(
+              builder: (context, ref, child) {
+                return IconButton(
+                  onPressed: () {
+                    // reset zoomLevel
+                    ref.read(controller).zoomLevel = 1;
+                    ref.read(fitWidth.notifier).state = !ref.read(fitWidth);
+                  },
+                  icon: Icon(ref.watch(fitWidth) ? Icons.zoom_in_map : Icons.zoom_out_map),
+                );
+              },
+            ),
+            const SizedBox(width: 16),
+            IconButton(
+              onPressed: () => ref.read(controller).zoomLevel = ref.read(controller).zoomLevel + 0.1,
+              icon: const Icon(Icons.zoom_in),
+            ),
+            const SizedBox(width: 16),
+            IconButton(
+              onPressed: () => ref.read(controller).zoomLevel = ref.read(controller).zoomLevel - 0.1,
+              icon: const Icon(Icons.zoom_out),
+            ),
+          ],
+        ),
+        const Divider(),
+        Flexible(
+          child: Consumer(
+            builder: (context, ref, _) {
+              final pdfViewer = SfPdfViewer.memory(bytes, controller: ref.read(controller));
+
+              if (ref.watch((fitWidth))) return pdfViewer;
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  return AspectRatio(aspectRatio: 0.70710678118, child: pdfViewer);
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

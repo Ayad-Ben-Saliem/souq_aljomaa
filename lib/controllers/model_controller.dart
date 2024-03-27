@@ -19,7 +19,7 @@ class ModelController {
   }
 
   Future<Iterable<BaseModel>> search({int limit = 10, int offset = 0, SearchOptions? searchOptions}) async {
-    final models = await Database.search(limit: limit, offset: offset);
+    final models = await Database.search(limit: limit, offset: offset, searchOptions: searchOptions);
     _models.addAll(models);
     return models;
   }

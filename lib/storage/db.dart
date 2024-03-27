@@ -202,22 +202,118 @@ abstract class Database {
     throw Exception('Model (${T.runtimeType}) not supported');
   }
 
+  static String whereQuery(List<String> fieldsName, String searchText) {
+    if (fieldsName.isEmpty || searchText.isEmpty) return '';
+
+    var result = 'WHERE ';
+    for (final txt in searchText.split(' ')) {
+      result += '(';
+      for (final fieldName in fieldsName) {
+        result += "$fieldName LIKE '%$txt%' OR ";
+      }
+      result = result.substring(0, result.length - 4);
+      result += ') AND ';
+    }
+
+    result = result.substring(0, result.length - 5);
+    return result;
+  }
+
   static Future<Iterable<BaseModel>> search({int limit = 10, int offset = 0, SearchOptions? searchOptions}) async {
-    // TODO: implement search
+    final model1Fields = [
+      'locality',
+      'witness',
+      'responsible',
+      'firstName',
+      'fatherName',
+      'grandfatherName',
+      'lastName',
+      'motherName',
+      'identifierNo',
+      'nationalId',
+      'testimony',
+    ];
+    final model234Fields = [
+      'locality',
+      'witness',
+      'responsible',
+      'firstName',
+      'fatherName',
+      'grandfatherName',
+      'lastName',
+      'identifierNo',
+      'identifierFrom',
+      'nationalId',
+      'testimony',
+    ];
+    final model5Fields = [
+      'locality',
+      'witness',
+      'responsible',
+      'firstName',
+      'fatherName',
+      'grandfatherName',
+      'lastName',
+      'motherName',
+      'identifierNo',
+      'nationalId',
+      'familyBookletNumber',
+      'familyDocumentNumber',
+      'issuePlace',
+      'issueDate',
+      'residence',
+      'nearestPoint',
+    ];
+    final model6Fields = [
+      'ownerName',
+      'ownerPhone',
+      'tenantName',
+      'tenantPhone',
+      'streetCode',
+      'shopNo',
+      'businessType',
+      'businessCategory',
+    ];
+    final model7Fields = [
+      'streetNo',
+      'buildingNo',
+      'registrationNo',
+      'familyHeadName',
+      'malesCount',
+      'femalesCount',
+      'widows',
+      'divorced',
+      'disabilities',
+      'lowIncome',
+      'unemployed',
+      'familyHeadDeathDate',
+      'currentFamilyHeadName',
+      'formFiller',
+      'notes',
+    ];
+
+
     final result = _db.select('''
-      SELECT id, at AS at, 'Model1' AS table_name FROM Model1
+      SELECT id, at, 'Model1' AS table_name FROM Model1
+      ${whereQuery(model1Fields, searchOptions?.text ?? '')}
       UNION ALL
-      SELECT id, at AS at, 'Model2' AS table_name FROM Model2
+      SELECT id, at, 'Model2' AS table_name FROM Model2
+      ${whereQuery(model234Fields, searchOptions?.text ?? '')}
       UNION ALL
-      SELECT id, at AS at, 'Model3' AS table_name FROM Model3
+      SELECT id, at, 'Model3' AS table_name FROM Model3
+      ${whereQuery(model234Fields, searchOptions?.text ?? '')}
       UNION ALL
-      SELECT id, at AS at, 'Model4' AS table_name FROM Model4
+      SELECT id, at, 'Model4' AS table_name FROM Model4
+      ${whereQuery(model234Fields, searchOptions?.text ?? '')}
       UNION ALL
-      SELECT id, at AS at, 'Model5' AS table_name FROM Model5
+      SELECT id, at, 'Model5' AS table_name FROM Model5
+      ${whereQuery(model5Fields, searchOptions?.text ?? '')}
       UNION ALL
-      SELECT id, at AS at, 'Model6' AS table_name FROM Model6
+      SELECT id, at, 'Model6' AS table_name FROM Model6
+      ${whereQuery(model6Fields, searchOptions?.text ?? '')}
       UNION ALL
-      SELECT id, at AS at, 'Model7' AS table_name FROM Model7
+      SELECT id, at, 'Model7' AS table_name FROM Model7
+      ${whereQuery(model7Fields, searchOptions?.text ?? '')}
       ORDER BY at DESC
       LIMIT $limit OFFSET $offset
     ''');
