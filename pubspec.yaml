@@ -45,15 +45,14 @@ dependencies:
   path_provider_windows: ^2.2.1
   jhijri_picker: ^1.0.1
   shared_preferences: ^2.2.2
-  fluttertoast: ^8.2.4
   equatable: ^2.0.5
   infinite_scroll_pagination: ^4.0.0
   dropdown_button2: ^2.3.9
   date_field: ^4.0.1
   file_picker: ^8.0.0+1
-  syncfusion_flutter_pdfviewer: 24.2.6
   printing: ^5.12.0
   pdf: ^3.10.8
+  pdfrx: ^0.4.50
 
 dev_dependencies:
   flutter_test:
