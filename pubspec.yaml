@@ -53,6 +53,7 @@ dependencies:
   printing: ^5.12.0
   pdf: ^3.10.8
   pdfrx: ^0.4.50
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,16 @@ dev_dependencies:
   riverpod_generator: ^2.3.11
   riverpod_lint: ^2.3.9
   custom_lint: ^0.6.0
+
+
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: "assets/images/manassa-logo.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  linux:
+    generate: true
+    image_path: "assets/images/manassa-logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
