@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
 import 'package:souq_aljomaa/controllers/model_controller.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
@@ -23,7 +23,6 @@ import 'package:souq_aljomaa/ui/pages/model4page.dart';
 import 'package:souq_aljomaa/ui/pages/model5page.dart';
 import 'package:souq_aljomaa/ui/pages/model6page.dart';
 import 'package:souq_aljomaa/ui/pages/model7page.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 final modelController = ModelController();
 
@@ -33,9 +32,7 @@ final currentModel = StateProvider<BaseModel?>((ref) => null);
 
 final refreshProvider = StateProvider((ref) => 0);
 
-final controller = StateProvider((ref) => PdfViewerController());
-
-final fitWidth = StateProvider((ref) => false);
+final pdfController = PdfViewerController();
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -123,15 +120,13 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
           ),
-          const VerticalDivider(),
+          const VerticalDivider(width: 0),
           Expanded(
             child: Consumer(
               builder: (context, ref, _) {
                 final model = ref.watch(currentModel);
                 if (model == null) return const Center(child: Text('اختر نموذج لعرضه', style: TextStyle(fontSize: 24)));
-                if (Platform.isLinux) {
-                  return PdfPreview(build: (format) => PdfManager.getDocument(model));
-                }
+
                 return FutureBuilder(
                   future: PdfManager.getDocument(model),
                   builder: (context, snapshot) {
@@ -202,55 +197,41 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget _pdfPage(Uint8List bytes) {
     return Column(
       children: [
-        Row(
-          children: [
-            IconButton(
-              onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes),
-              icon: const Icon(Icons.print_outlined),
-            ),
-            const SizedBox(width: 16),
-            IconButton(
-              onPressed: () => Printing.sharePdf(bytes: bytes),
-              icon: const Icon(Icons.share),
-            ),
-            const SizedBox(width: 16),
-            Consumer(
-              builder: (context, ref, child) {
-                return IconButton(
-                  onPressed: () {
-                    // reset zoomLevel
-                    ref.read(controller).zoomLevel = 1;
-                    ref.read(fitWidth.notifier).state = !ref.read(fitWidth);
-                  },
-                  icon: Icon(ref.watch(fitWidth) ? Icons.zoom_in_map : Icons.zoom_out_map),
-                );
-              },
-            ),
-            const SizedBox(width: 16),
-            IconButton(
-              onPressed: () => ref.read(controller).zoomLevel = ref.read(controller).zoomLevel + 0.1,
-              icon: const Icon(Icons.zoom_in),
-            ),
-            const SizedBox(width: 16),
-            IconButton(
-              onPressed: () => ref.read(controller).zoomLevel = ref.read(controller).zoomLevel - 0.1,
-              icon: const Icon(Icons.zoom_out),
-            ),
-          ],
-        ),
-        const Divider(),
-        Flexible(
-          child: Consumer(
-            builder: (context, ref, _) {
-              final pdfViewer = SfPdfViewer.memory(bytes, controller: ref.read(controller));
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes),
+                icon: const Icon(Icons.print_outlined),
+              ),
+              const SizedBox(width: 16),
+              IconButton(
+                onPressed: () {
+                  print(pdfController.currentZoom);
 
-              if (ref.watch((fitWidth))) return pdfViewer;
-              return LayoutBuilder(
-                builder: (context, constraints) {
-                  return AspectRatio(aspectRatio: 0.70710678118, child: pdfViewer);
+                  pdfController.setZoom(pdfController.centerPosition, pdfController.currentZoom + 1);
                 },
-              );
-            },
+                icon: const Icon(Icons.zoom_in),
+              ),
+              const SizedBox(width: 16),
+              IconButton(
+                onPressed: () => pdfController.setZoom(pdfController.centerPosition, pdfController.currentZoom - 1),
+                icon: const Icon(Icons.zoom_out),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 0),
+        Flexible(
+          child: PdfViewer.data(
+            bytes,
+            sourceName: 'model.pdf',
+            controller: pdfController,
+            params: PdfViewerParams(
+              backgroundColor: Theme.of(context).colorScheme.background,
+              pageAnchor: PdfPageAnchor.all,
+            ),
           ),
         ),
       ],
