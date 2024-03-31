@@ -127,21 +127,31 @@ class _HomePageState extends ConsumerState<HomePage> {
                 final model = ref.watch(currentModel);
                 if (model == null) return const Center(child: Text('اختر نموذج لعرضه', style: TextStyle(fontSize: 24)));
 
-                return FutureBuilder(
-                  future: PdfManager.getDocument(model),
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.active:
-                      case ConnectionState.waiting:
-                        return const Center(child: CircularProgressIndicator());
-                      case ConnectionState.done:
-                        final bytes = snapshot.requireData;
-                        return _pdfPage(bytes);
-                      case ConnectionState.none:
-                        return Container();
-                    }
-                  },
-                );
+                try {
+                  return FutureBuilder(
+                    future: PdfManager.getDocument(model),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.active:
+                        case ConnectionState.waiting:
+                          return const Center(child: CircularProgressIndicator());
+                        case ConnectionState.done:
+                          final bytes = snapshot.requireData;
+                          return _pdfPage(bytes);
+                        case ConnectionState.none:
+                          return Container();
+                      }
+                    },
+                  );
+                } catch (error, stackTrace) {
+                  return Column(
+                    children: [
+                      Text('$error'),
+                      const Divider(),
+                      Text('$stackTrace'),
+                    ],
+                  );
+                }
               },
             ),
           ),
@@ -207,11 +217,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
               const SizedBox(width: 16),
               IconButton(
-                onPressed: () {
-                  print(pdfController.currentZoom);
-
-                  pdfController.setZoom(pdfController.centerPosition, pdfController.currentZoom + 1);
-                },
+                onPressed: () => pdfController.setZoom(pdfController.centerPosition, pdfController.currentZoom + 1),
                 icon: const Icon(Icons.zoom_in),
               ),
               const SizedBox(width: 16),
