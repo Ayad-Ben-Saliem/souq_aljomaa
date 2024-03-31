@@ -127,31 +127,33 @@ class _HomePageState extends ConsumerState<HomePage> {
                 final model = ref.watch(currentModel);
                 if (model == null) return const Center(child: Text('اختر نموذج لعرضه', style: TextStyle(fontSize: 24)));
 
-                try {
-                  return FutureBuilder(
-                    future: PdfManager.getDocument(model),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.active:
-                        case ConnectionState.waiting:
-                          return const Center(child: CircularProgressIndicator());
-                        case ConnectionState.done:
+                return FutureBuilder(
+                  future: PdfManager.getDocument(model),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.active:
+                      case ConnectionState.waiting:
+                        return const Center(child: CircularProgressIndicator());
+                      case ConnectionState.done:
+                        if (snapshot.hasData) {
                           final bytes = snapshot.requireData;
                           return _pdfPage(bytes);
-                        case ConnectionState.none:
-                          return Container();
-                      }
-                    },
-                  );
-                } catch (error, stackTrace) {
-                  return Column(
-                    children: [
-                      Text('$error'),
-                      const Divider(),
-                      Text('$stackTrace'),
-                    ],
-                  );
-                }
+                        } else if (snapshot.hasError) {
+                          return Column(
+                            children: [
+                              Text('${snapshot.error}'),
+                              const Divider(),
+                              Text('${snapshot.stackTrace}'),
+                            ],
+                          );
+                        } else {
+                          return const Center(child: Text('لا يوجد بيانات!!!'));
+                        }
+                      case ConnectionState.none:
+                        return Container();
+                    }
+                  },
+                );
               },
             ),
           ),
