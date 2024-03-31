@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:souq_aljomaa/storage/db.dart';
 import 'package:souq_aljomaa/ui/app.dart';
 import 'package:intl/intl_standalone.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 late final SharedPreferences sharedPreferences;
 
@@ -15,6 +17,7 @@ late final SharedPreferences sharedPreferences;
 void main() async {
   sharedPreferences = await SharedPreferences.getInstance();
   WidgetsFlutterBinding.ensureInitialized();
+  initializeDateFormatting();
 
   await findSystemLocale();
 
