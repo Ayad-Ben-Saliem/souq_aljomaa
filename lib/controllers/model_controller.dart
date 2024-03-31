@@ -30,5 +30,24 @@ class ModelController {
     return model;
   }
 
+  Future<bool> deleteModel(BaseModel model) async {
+    final deleted = await Database.deleteModel(model);
+    if (deleted) _models.remove(model);
+    return deleted;
+  }
+
+  Future<bool> deleteModelById<T extends BaseModel>(int id, {String tableName = ''}) async {
+    final deleted = await Database.deleteModelById(id);
+    if (deleted) {
+      for (final model in _models) {
+        if (model.id == id) {
+          _models.remove(model);
+          break;
+        }
+      }
+    }
+    return deleted;
+  }
+
   void clear() => _models.clear();
 }

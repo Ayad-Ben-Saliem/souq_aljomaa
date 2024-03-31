@@ -202,7 +202,7 @@ abstract class Database {
     throw Exception('Model (${T.runtimeType}) not supported');
   }
 
-  static String whereQuery(List<String> fieldsName, String searchText) {
+  static String _whereQuery(List<String> fieldsName, String searchText) {
     if (fieldsName.isEmpty || searchText.isEmpty) return '';
 
     var result = 'WHERE ';
@@ -292,28 +292,27 @@ abstract class Database {
       'notes',
     ];
 
-
     final result = _db.select('''
       SELECT id, at, 'Model1' AS table_name FROM Model1
-      ${whereQuery(model1Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model1Fields, searchOptions?.text ?? '')}
       UNION ALL
       SELECT id, at, 'Model2' AS table_name FROM Model2
-      ${whereQuery(model234Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model234Fields, searchOptions?.text ?? '')}
       UNION ALL
       SELECT id, at, 'Model3' AS table_name FROM Model3
-      ${whereQuery(model234Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model234Fields, searchOptions?.text ?? '')}
       UNION ALL
       SELECT id, at, 'Model4' AS table_name FROM Model4
-      ${whereQuery(model234Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model234Fields, searchOptions?.text ?? '')}
       UNION ALL
       SELECT id, at, 'Model5' AS table_name FROM Model5
-      ${whereQuery(model5Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model5Fields, searchOptions?.text ?? '')}
       UNION ALL
       SELECT id, at, 'Model6' AS table_name FROM Model6
-      ${whereQuery(model6Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model6Fields, searchOptions?.text ?? '')}
       UNION ALL
       SELECT id, at, 'Model7' AS table_name FROM Model7
-      ${whereQuery(model7Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model7Fields, searchOptions?.text ?? '')}
       ORDER BY at DESC
       LIMIT $limit OFFSET $offset
     ''');
@@ -369,6 +368,53 @@ abstract class Database {
       }
     }
     return result;
+  }
+
+  static Future<bool> deleteModel(BaseModel model) async {
+    if (model.id == null) throw Exception('Invalid model!! cant delete model, id is null');
+    if (model is Model1) return deleteModelById(model.id!, tableName: 'Model1');
+    if (model is Model2) return deleteModelById(model.id!, tableName: 'Model2');
+    if (model is Model3) return deleteModelById(model.id!, tableName: 'Model3');
+    if (model is Model4) return deleteModelById(model.id!, tableName: 'Model4');
+    if (model is Model5) return deleteModelById(model.id!, tableName: 'Model5');
+    if (model is Model6) return deleteModelById(model.id!, tableName: 'Model6');
+    if (model is Model7) return deleteModelById(model.id!, tableName: 'Model7');
+
+    throw Exception('Model (${model.runtimeType}) not supported');
+  }
+
+  static Future<bool> deleteModelById<T extends BaseModel>(int id, {String tableName = ''}) async {
+    if (tableName.isEmpty) {
+      switch (T) {
+        case const (Model1):
+          tableName = 'Model1';
+          break;
+        case const (Model2):
+          tableName = 'Model1';
+          break;
+        case const (Model3):
+          tableName = 'Model1';
+          break;
+        case const (Model4):
+          tableName = 'Model1';
+          break;
+        case const (Model5):
+          tableName = 'Model1';
+          break;
+        case const (Model6):
+          tableName = 'Model1';
+          break;
+        case const (Model7):
+          tableName = 'Model1';
+          break;
+        default:
+          throw Exception('Model (${T.runtimeType}) not supported');
+      }
+    }
+
+    _db.execute('DELETE FROM $tableName WHERE id = ?', [id]);
+
+    return true;
   }
 
   // ========================= Model1 =========================

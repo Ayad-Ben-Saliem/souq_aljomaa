@@ -317,13 +317,14 @@ class ModelListTile extends StatelessWidget {
       builder: (context, ref, _) {
         return InkWell(
           child: ListTile(
-            title: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomText(title),
-            ),
-            trailing: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 200),
-              child: Text(trailing, style: const TextStyle(fontSize: 16)),
+            title: CustomText(title),
+            subtitle: Text(trailing, style: const TextStyle(fontSize: 16)),
+            trailing: IconButton(
+              onPressed: () {
+                modelController.deleteModel(model);
+                ref.read(refreshProvider.notifier).state = ref.read(refreshProvider) + 1;
+              },
+              icon: const Icon(Icons.delete_outline),
             ),
             selected: ref.watch(currentModel) == model,
             selectedTileColor: Colors.blue,
