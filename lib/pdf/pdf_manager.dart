@@ -583,7 +583,7 @@ pw.Widget _getModel6Page(Model6 model) {
           ],
         ),
         pw.SizedBox(height: 64),
-        pw.Text('التاريخ:  ${DateFormat('yyyy/MM/dd', 'ar-ly').format(model.at!)} م.'),
+        pw.Text('التاريخ:  ${DateFormat('yyyy/MM/dd').format(model.at!)} م.'),
         pw.SizedBox(height: 24),
         pw.Text('مختار المحلة'),
         pw.SizedBox(height: 32),
@@ -728,7 +728,7 @@ pw.Widget _getModel7Page(Model7 model) {
         pw.Text(
           'تاريخ وفاة رب الأسرة:  ${() {
             if (model.familyHeadDeathDate == null) return '/ / / / /';
-            return DateFormat('yyyy/MM/dd', 'ar-ly').format(model.familyHeadDeathDate!);
+            return DateFormat('yyyy/MM/dd').format(model.familyHeadDeathDate!);
           }()}',
         ),
         pw.SizedBox(height: 16),
