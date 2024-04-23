@@ -15,6 +15,7 @@ import 'package:souq_aljomaa/models/model5.dart';
 import 'package:souq_aljomaa/models/model6.dart';
 import 'package:souq_aljomaa/models/model7.dart';
 import 'package:souq_aljomaa/pdf/pdf_manager.dart';
+import 'package:souq_aljomaa/pdf/syncfusion_pdf_builder.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/pages/model1page.dart';
 import 'package:souq_aljomaa/ui/pages/model2page.dart';
@@ -30,9 +31,9 @@ final searchText = StateProvider((ref) => '');
 
 final currentModel = StateProvider<BaseModel?>((ref) => null);
 
-final refreshProvider = StateProvider((ref) => 0);
-
 final pdfController = PdfViewerController();
+
+final _pagingController = PagingController<int, BaseModel>(firstPageKey: 0);
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -41,32 +42,13 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 
   static void refresh(WidgetRef ref) {
-    final refreshState = ref.read(refreshProvider);
-    ref.read(refreshProvider.notifier).state = refreshState + 1;
+    ref.read(currentModel.notifier).state = null;
+    _pagingController.refresh();
   }
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
   static const _pageSize = 10;
-
-  final _pagingController = PagingController<int, BaseModel>(firstPageKey: 0);
-
-  void _fetchData(int pageKey) async {
-    try {
-      final models = await modelController.search(
-        limit: _pageSize,
-        offset: pageKey,
-        searchOptions: SearchOptions(ref.read(searchText)),
-      );
-      if (models.isEmpty) {
-        _pagingController.appendLastPage(models.toList());
-      } else {
-        _pagingController.appendPage(models.toList(), pageKey + models.length);
-      }
-    } catch (error) {
-      _pagingController.error = error;
-    }
-  }
 
   @override
   void initState() {
@@ -75,15 +57,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   @override
-  void dispose() {
-    _pagingController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    ref.listen(refreshProvider, (previous, next) => _pagingController.refresh());
-    ref.listen(searchText, (previous, next) => _pagingController.refresh());
+    ref.listen(searchText, (previous, next) => HomePage.refresh(ref));
     return Scaffold(
       body: Row(
         children: [
@@ -128,7 +103,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 if (model == null) return const Center(child: Text('اختر نموذج لعرضه', style: TextStyle(fontSize: 24)));
 
                 return FutureBuilder(
-                  future: PdfManager.getDocument(model),
+                  future: SyncfusionPdfBuilder.getDocument(model),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.active:
@@ -246,16 +221,36 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  void _popAndPushPage(BuildContext context, Widget page) {
-    Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-  }
-
   Widget _button(BuildContext context, String title, Widget page) {
     return ElevatedButton(
-      onPressed: () => _popAndPushPage(context, page),
+      onPressed: () => Navigator.of(context)
+        ..pop()
+        ..push(MaterialPageRoute(builder: (_) => page)),
       child: CustomText(title),
     );
+  }
+
+  void _fetchData(int pageKey) async {
+    try {
+      final models = await modelController.search(
+        limit: _pageSize,
+        offset: pageKey,
+        searchOptions: SearchOptions(ref.read(searchText)),
+      );
+      if (models.isEmpty) {
+        _pagingController.appendLastPage(models.toList());
+      } else {
+        _pagingController.appendPage(models.toList(), pageKey + models.length);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 }
 
@@ -311,7 +306,7 @@ class ModelListTile extends StatelessWidget {
             trailing: IconButton(
               onPressed: () {
                 modelController.deleteModel(model);
-                ref.read(refreshProvider.notifier).state = ref.read(refreshProvider) + 1;
+                HomePage.refresh(ref);
               },
               icon: const Icon(Icons.delete_outline),
             ),

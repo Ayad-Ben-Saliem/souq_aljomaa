@@ -42,18 +42,20 @@ abstract class PdfManager {
         defaultTextStyle: pw.TextStyle(
           font: harfFannanFont,
           fontBold: harfFannanFontBold,
-          fontSize: 14,
+          fontSize: 20,
         ),
       ),
     );
 
     final page = pw.Page(
       pageFormat: PdfPageFormat.a4,
+      margin: const pw.EdgeInsets.all(0),
       build: (context) {
         return pw.Directionality(
           textDirection: pw.TextDirection.rtl,
-          child: pw.Builder(
-            builder: (context) {
+          child: pw.Padding(
+            padding: const pw.EdgeInsets.all(32),
+            child: pw.Builder(builder: (context) {
               if (model is Model1) return _getModel1Page(model);
               if (model is Model2) return _getModel2Page(model);
               if (model is Model3) return _getModel3Page(model);
@@ -63,7 +65,7 @@ abstract class PdfManager {
               if (model is Model7) return _getModel7Page(model);
 
               return pw.Center(child: pw.Text('غير مصممة بعد'));
-            },
+            }),
           ),
         );
       },
@@ -444,12 +446,15 @@ pw.Widget _getModel5Page(Model5 model) {
         pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.center,
           children: [
-            pw.Image(pw.MemoryImage(headerImageData!)),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(-64),
+              child: pw.Image(pw.MemoryImage(headerImageData!)),
+              ),
             pw.SizedBox(height: 16),
             pw.Text('محلة: ${model.locality}'),
             pw.Padding(
               padding: const pw.EdgeInsets.all(32),
-              child: pw.Text(model.documentTitle, style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+              child: pw.Text(model.documentTitle, style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
             ),
             pw.Row(
               children: [

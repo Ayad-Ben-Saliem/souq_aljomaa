@@ -926,7 +926,7 @@ abstract class Database {
 
     _db.execute(
       '''
-      UPDATE Model3
+      UPDATE Model5
       SET 
         at = ?,
         scanner = ?,
@@ -1016,7 +1016,7 @@ abstract class Database {
         shopNo,
         businessType,
         businessCategory
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ''',
       [
         model.at!.toIso8601String(),
@@ -1040,7 +1040,7 @@ abstract class Database {
 
     _db.execute(
       '''
-      UPDATE Model3
+      UPDATE Model6
       SET 
         at = ?,
         scanner = ?,
@@ -1145,7 +1145,7 @@ abstract class Database {
         model.familyHeadDeathDate,
         model.currentFamilyHeadName,
         formFiller,
-        model.notes
+        model.notes,
       ],
     );
 
@@ -1165,7 +1165,7 @@ abstract class Database {
 
     _db.execute(
       '''
-      UPDATE Model3
+      UPDATE Model7
       SET 
         at = ?,
         scanner = ?,

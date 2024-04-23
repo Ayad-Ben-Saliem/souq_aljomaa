@@ -54,6 +54,7 @@ dependencies:
   pdf: ^3.10.8
   pdfrx: ^0.4.50
   flutter_launcher_icons: ^0.13.1
+  syncfusion_flutter_pdf: ^24.2.9
 
 dev_dependencies:
   flutter_test:
