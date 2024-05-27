@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -14,8 +15,8 @@ import 'package:souq_aljomaa/models/model4.dart';
 import 'package:souq_aljomaa/models/model5.dart';
 import 'package:souq_aljomaa/models/model6.dart';
 import 'package:souq_aljomaa/models/model7.dart';
-import 'package:souq_aljomaa/pdf/pdf_manager.dart';
 import 'package:souq_aljomaa/pdf/syncfusion_pdf_builder.dart';
+import 'package:souq_aljomaa/ui/custom_tab_view.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/pages/model1page.dart';
 import 'package:souq_aljomaa/ui/pages/model2page.dart';
@@ -112,7 +113,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       case ConnectionState.done:
                         if (snapshot.hasData) {
                           final bytes = snapshot.requireData;
-                          return _pdfPage(bytes);
+                          return _pdfPage(bytes, model);
                         } else if (snapshot.hasError) {
                           return Column(
                             children: [
@@ -181,43 +182,52 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _pdfPage(Uint8List bytes) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes),
-                icon: const Icon(Icons.print_outlined),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () => pdfController.setZoom(pdfController.centerPosition, pdfController.currentZoom + 1),
-                icon: const Icon(Icons.zoom_in),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () => pdfController.setZoom(pdfController.centerPosition, pdfController.currentZoom - 1),
-                icon: const Icon(Icons.zoom_out),
-              ),
-            ],
-          ),
-        ),
-        const Divider(height: 0),
-        Flexible(
-          child: PdfViewer.data(
-            bytes,
-            sourceName: 'model.pdf',
-            controller: pdfController,
-            params: PdfViewerParams(
-              backgroundColor: Theme.of(context).colorScheme.background,
-              pageAnchor: PdfPageAnchor.all,
+  Widget _pdfPage(Uint8List bytes, BaseModel model) {
+    return CustomTabView(
+      isScrollable: false,
+      itemCount: model.scanner == null ? 1 : 2,
+      tabBuilder: (context, index) {
+        if (index == 0) {
+          return SizedBox(
+            height: kToolbarHeight,
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes, name: model.documentTitle),
+                  icon: const Icon(Icons.print_outlined),
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  onPressed: () => pdfController.setZoom(pdfController.centerPosition, pdfController.currentZoom + 1),
+                  icon: const Icon(Icons.zoom_in),
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  onPressed: () => pdfController.setZoom(pdfController.centerPosition, pdfController.currentZoom - 1),
+                  icon: const Icon(Icons.zoom_out),
+                ),
+              ],
             ),
-          ),
-        ),
-      ],
+          );
+        }
+        return const SizedBox(height: kToolbarHeight, child: Center(child: Text('Scanner Image')));
+      },
+      pageBuilder: (context, index) {
+        if (index == 0) {
+          return Flexible(
+            child: PdfViewer.data(
+              bytes,
+              sourceName: model.documentTitle,
+              controller: pdfController,
+              params: PdfViewerParams(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                pageAnchor: PdfPageAnchor.all,
+              ),
+            ),
+          );
+        }
+        return Image.file(File(model.scanner!));
+      },
     );
   }
 
