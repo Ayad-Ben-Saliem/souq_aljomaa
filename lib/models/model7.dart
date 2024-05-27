@@ -375,7 +375,7 @@ class Model7 extends BaseModel {
       at: DateTime.parse(json['at']),
       scanner: json['scanner'],
       streetNo: json['streetNo'],
-      buildingNo: json['registrationNo'],
+      buildingNo: json['buildingNo'],
       registrationNo: json['registrationNo'],
       familyHeadName: json['familyHeadName'],
       malesCount: json['malesCount'],

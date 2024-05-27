@@ -5,6 +5,8 @@ import 'package:souq_aljomaa/models/model2.dart';
 import 'package:souq_aljomaa/models/model3.dart';
 import 'package:souq_aljomaa/models/model4.dart';
 import 'package:souq_aljomaa/models/model5.dart';
+import 'package:souq_aljomaa/models/model6.dart';
+import 'package:souq_aljomaa/models/model7.dart';
 import 'package:souq_aljomaa/pdf/pdf_builder.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
@@ -13,6 +15,8 @@ Uint8List? form2Bytes;
 Uint8List? form3Bytes;
 Uint8List? form4Bytes;
 Uint8List? form5Bytes;
+
+PdfDocument? watermarkedDocument;
 
 abstract class SyncfusionPdfBuilder {
   static Future<Uint8List> getDocument(BaseModel model) async {
@@ -32,6 +36,12 @@ abstract class SyncfusionPdfBuilder {
     } else if (model is Model5) {
       form5Bytes ??= (await rootBundle.load('assets/pdf/5.pdf')).buffer.asUint8List();
       document = PdfDocument(inputBytes: form5Bytes!.toList());
+    } else if (model is Model6) {
+      watermarkedDocument ??= await _getWatermarkedDocument();
+      document = watermarkedDocument;
+    } else if (model is Model7) {
+      watermarkedDocument ??= await _getWatermarkedDocument();
+      document = watermarkedDocument;
     }
 
     final formContent = await PdfBuilder.getFormContent(model);
@@ -44,5 +54,43 @@ abstract class SyncfusionPdfBuilder {
     } else {
       return formContent;
     }
+  }
+
+  static Future<PdfDocument> _getWatermarkedDocument() async {
+    final document = PdfDocument();
+
+    document.pageSettings.size = PdfPageSize.a4;
+    document.pageSettings.margins.all = 0;
+
+    final souqAljomaaLogo = (await rootBundle.load('assets/images/souq_aljomaa_logo.png')).buffer.asUint8List();
+
+    PdfPage page = document.pages.add();
+
+    Size pageSize = page.getClientSize();
+    PdfFont font = PdfStandardFont(PdfFontFamily.helvetica, 40);
+
+    PdfGraphics graphics = page.graphics;
+    graphics.save();
+    graphics.translateTransform(pageSize.width / 2, pageSize.height / 2);
+    graphics.setTransparency(0.05);
+    const watermarkSize = 500.0;
+    graphics.drawImage(
+      PdfBitmap(souqAljomaaLogo.toList()),
+      const Rect.fromLTWH(
+        watermarkSize / -2,
+        watermarkSize / -2,
+        watermarkSize,
+        watermarkSize,
+      ),
+    );
+
+    graphics.restore();
+
+    graphics.drawImage(
+      PdfBitmap(souqAljomaaLogo.toList()),
+      const Rect.fromLTWH(10, 10, 100, 100),
+    );
+
+    return document;
   }
 }
