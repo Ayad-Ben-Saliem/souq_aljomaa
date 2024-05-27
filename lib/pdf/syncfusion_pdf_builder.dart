@@ -67,7 +67,6 @@ abstract class SyncfusionPdfBuilder {
     PdfPage page = document.pages.add();
 
     Size pageSize = page.getClientSize();
-    PdfFont font = PdfStandardFont(PdfFontFamily.helvetica, 40);
 
     PdfGraphics graphics = page.graphics;
     graphics.save();
