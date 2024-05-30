@@ -214,15 +214,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       },
       pageBuilder: (context, index) {
         if (index == 0) {
-          return Flexible(
-            child: PdfViewer.data(
-              bytes,
-              sourceName: model.documentTitle,
-              controller: pdfController,
-              params: PdfViewerParams(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                pageAnchor: PdfPageAnchor.all,
-              ),
+          return PdfViewer.data(
+            bytes,
+            sourceName: model.documentTitle,
+            controller: pdfController,
+            params: PdfViewerParams(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              pageAnchor: PdfPageAnchor.all,
             ),
           );
         }
