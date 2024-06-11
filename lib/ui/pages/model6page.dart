@@ -84,7 +84,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                             return CustomTextFormField(
                                               initialValue: _initialValue.ownerName,
                                               onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(ownerName: txt),
-                                              validator: (txt) => ref.read(_modelProvider.select((model) => model.ownerName)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                              validator: (txt) => ref.read(_modelProvider).ownerName.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                               decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                             );
                                           },
@@ -104,7 +104,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                             return CustomTextFormField(
                                               initialValue: _initialValue.ownerPhone,
                                               onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(ownerPhone: txt),
-                                              validator: (txt) => ref.read(_modelProvider.select((model) => model.ownerPhone)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                              validator: (txt) => ref.read(_modelProvider).ownerPhone.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                               decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                             );
                                           },
@@ -129,7 +129,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                             return CustomTextFormField(
                                               initialValue: _initialValue.tenantName,
                                               onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(tenantName: txt),
-                                              validator: (txt) => ref.read(_modelProvider.select((model) => model.tenantName)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                              validator: (txt) => ref.read(_modelProvider).tenantName.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                               decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                             );
                                           },
@@ -149,7 +149,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                             return CustomTextFormField(
                                               initialValue: _initialValue.tenantPhone,
                                               onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(tenantPhone: txt),
-                                              validator: (txt) => ref.read(_modelProvider.select((model) => model.tenantPhone)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                              validator: (txt) => ref.read(_modelProvider).tenantPhone.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                               decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                             );
                                           },
@@ -174,7 +174,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                             return CustomTextFormField(
                                               initialValue: _initialValue.streetCode,
                                               onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(streetCode: txt),
-                                              validator: (txt) => ref.read(_modelProvider.select((model) => model.streetCode)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                              validator: (txt) => ref.read(_modelProvider).streetCode.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                               decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                             );
                                           },
@@ -194,7 +194,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                             return CustomTextFormField(
                                               initialValue: _initialValue.shopNo,
                                               onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(shopNo: txt),
-                                              validator: (txt) => ref.read(_modelProvider.select((model) => model.shopNo)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                              validator: (txt) => ref.read(_modelProvider).shopNo.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                               decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                             );
                                           },
@@ -219,7 +219,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                             return CustomTextFormField(
                                               initialValue: _initialValue.businessType,
                                               onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(businessType: txt),
-                                              validator: (txt) => ref.read(_modelProvider.select((model) => model.businessType)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                              validator: (txt) => ref.read(_modelProvider).businessType.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                               decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                             );
                                           },
@@ -239,7 +239,7 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                                             return CustomTextFormField(
                                               initialValue: _initialValue.businessCategory,
                                               onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(businessCategory: txt),
-                                              validator: (txt) => ref.read(_modelProvider.select((model) => model.businessCategory)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                              validator: (txt) => ref.read(_modelProvider).businessCategory.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                               decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                             );
                                           },

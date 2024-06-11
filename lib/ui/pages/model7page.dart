@@ -81,7 +81,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                   child: CustomTextFormField(
                                     initialValue: _initialValue.streetNo,
                                     onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(streetNo: txt),
-                                    validator: (txt) => ref.read(_modelProvider.select((model) => model.streetNo)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    validator: (txt) => ref.read(_modelProvider).streetNo.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                   ),
                                 ),
@@ -97,7 +97,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                   child: CustomTextFormField(
                                     initialValue: _initialValue.buildingNo,
                                     onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(buildingNo: txt),
-                                    validator: (txt) => ref.read(_modelProvider.select((model) => model.buildingNo)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    validator: (txt) => ref.read(_modelProvider).buildingNo.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                   ),
                                 ),
@@ -113,7 +113,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                   child: CustomTextFormField(
                                     initialValue: _initialValue.registrationNo,
                                     onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(registrationNo: txt),
-                                    validator: (txt) => ref.read(_modelProvider.select((model) => model.registrationNo)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    validator: (txt) => ref.read(_modelProvider).registrationNo.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                   ),
                                 ),
@@ -129,7 +129,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                   child: CustomTextFormField(
                                     initialValue: _initialValue.familyHeadName,
                                     onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(familyHeadName: txt),
-                                    validator: (txt) => ref.read(_modelProvider.select((model) => model.familyHeadName)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    validator: (txt) => ref.read(_modelProvider).familyHeadName.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                   ),
                                 ),
@@ -145,7 +145,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                   child: CustomTextFormField(
                                     initialValue: _initialValue.malesCount.toString(),
                                     onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(malesCount: int.tryParse(txt)),
-                                    // validator: (txt) => ref.read(_modelProvider.select((model) => model.malesCount)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    // validator: (txt) => ref.read(_modelProvider).malesCount.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('ذكور')),
                                   ),
                                 ),
@@ -154,7 +154,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                   child: CustomTextFormField(
                                     initialValue: _initialValue.femalesCount.toString(),
                                     onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(femalesCount: int.tryParse(txt)),
-                                    // validator: (txt) => ref.read(_modelProvider.select((model) => model.femalesCount)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    // validator: (txt) => ref.read(_modelProvider).femalesCount.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('إناث')),
                                   ),
                                 ),
@@ -303,7 +303,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                       final disabilities = model.disabilities?.copyWith(malesCount: malesCount) ?? Disabilities(malesCount: malesCount ?? 0, femalesCount: 0);
                                       ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(disabilities: disabilities);
                                     },
-                                    // validator: (txt) => ref.read(_modelProvider.select((model) => model.malesCount)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    // validator: (txt) => ref.read(_modelProvider).malesCount.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('ذكور')),
                                   ),
                                 ),
@@ -317,7 +317,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                       final disabilities = model.disabilities?.copyWith(malesCount: femalesCount) ?? Disabilities(malesCount: 0, femalesCount: femalesCount ?? 0);
                                       ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(disabilities: disabilities);
                                     },
-                                    // validator: (txt) => ref.read(_modelProvider.select((model) => model.femalesCount)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    // validator: (txt) => ref.read(_modelProvider).femalesCount.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), label: Text('إناث')),
                                   ),
                                 ),
@@ -351,6 +351,13 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                   child: CustomTextFormField(
                                     initialValue: _initialValue.currentFamilyHeadName,
                                     onChanged: (txt) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(currentFamilyHeadName: txt),
+                                    validator: (txt) {
+                                      final familyHeadDeathDate = ref.read(_modelProvider).familyHeadDeathDate;
+                                      if (familyHeadDeathDate == null) return null;
+                                      final currentFamilyHeadName = ref.read(_modelProvider).currentFamilyHeadName;
+                                      if (currentFamilyHeadName == null) return 'هذا الحقل مطلوب';
+                                      return null;
+                                    },
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18)),
                                   ),
                                 ),
@@ -369,7 +376,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                       final model = ref.read(_modelProvider);
                                       ref.read(_modelProvider.notifier).state = model.copyWith(formFiller: model.formFiller.copyWith(name: txt));
                                     },
-                                    validator: (txt) => ref.read(_modelProvider.select((model) => model.formFiller.name)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    validator: (txt) => ref.read(_modelProvider).formFiller.name.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), labelText: 'الاسم'),
                                   ),
                                 ),
@@ -381,7 +388,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                       final model = ref.read(_modelProvider);
                                       ref.read(_modelProvider.notifier).state = model.copyWith(formFiller: model.formFiller.copyWith(phoneNo: txt));
                                     },
-                                    validator: (txt) => ref.read(_modelProvider.select((model) => model.formFiller.phoneNo)).trim().isEmpty ? 'هذا الحقل مطلوب' : null,
+                                    validator: (txt) => ref.read(_modelProvider).formFiller.phoneNo.trim().isEmpty ? 'هذا الحقل مطلوب' : null,
                                     decoration: const InputDecoration(errorStyle: TextStyle(fontSize: 18), labelText: 'رقم الهاتف'),
                                   ),
                                 ),
