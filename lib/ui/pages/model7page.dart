@@ -296,7 +296,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: CustomTextFormField(
-                                    initialValue: _initialValue.malesCount.toString(),
+                                    initialValue: _initialValue.disabilities?.malesCount.toString() ?? '',
                                     onChanged: (txt) {
                                       final model = ref.read(_modelProvider);
                                       final malesCount = int.tryParse(txt);
@@ -310,7 +310,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: CustomTextFormField(
-                                    initialValue: _initialValue.femalesCount.toString(),
+                                    initialValue: _initialValue.disabilities?.femalesCount.toString() ?? '',
                                     onChanged: (txt) {
                                       final model = ref.read(_modelProvider);
                                       final femalesCount = int.tryParse(txt);
