@@ -16,7 +16,7 @@ final _modelProvider = StateProvider((ref) => _initialValue);
 
 final _formKey = GlobalKey<FormState>();
 
-var _initialValue = Model1(
+final _emptyValue = Model1(
   locality: '',
   witness: '',
   responsible: '',
@@ -30,6 +30,7 @@ var _initialValue = Model1(
   testimony: '',
   date: DateTime.now(),
 );
+var _initialValue = _emptyValue;
 
 class Model1Page extends ConsumerStatefulWidget {
   final Model1? model;
@@ -49,7 +50,7 @@ class _Model1PageState extends ConsumerState<Model1Page> {
     if (model != null) {
       _initialValue = model.copyWith();
     } else {
-      _initialValue = _initialValue.copyWith(
+      _initialValue = _emptyValue.copyWith(
         locality: sharedPreferences.getString('locality'),
         witness: sharedPreferences.getString('witness'),
         responsible: sharedPreferences.getString('responsible'),

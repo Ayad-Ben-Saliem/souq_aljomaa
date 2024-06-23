@@ -15,7 +15,7 @@ final _modelProvider = StateProvider((ref) => _initialValue);
 
 final _formKey = GlobalKey<FormState>();
 
-var _initialValue = Model7(
+final _emptyValue = Model7(
   streetNo: '',
   buildingNo: '',
   registrationNo: '',
@@ -24,6 +24,7 @@ var _initialValue = Model7(
   femalesCount: 0,
   formFiller: const FormFiller(name: '', phoneNo: ''),
 );
+var _initialValue = _emptyValue;
 
 class Model7Page extends ConsumerStatefulWidget {
   final Model7? model;
@@ -39,10 +40,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
   void initState() {
     super.initState();
 
-    final model = widget.model;
-    if (model != null) {
-      _initialValue = model.copyWith();
-    }
+    _initialValue = widget.model == null ? _emptyValue : widget.model!.copyWith();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref.read(_modelProvider.notifier).state = _initialValue;
