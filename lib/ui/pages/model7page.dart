@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:intl/intl.dart' hide TextDirection;
 
 import 'package:date_field/date_field.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -335,6 +336,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                     mode: DateTimeFieldPickerMode.date,
                                     decoration: const InputDecoration(labelText: 'Enter Date'),
                                     onChanged: (date) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(familyHeadDeathDate: date),
+                                    dateFormat: DateFormat('yyyy-MM-yy'),
                                   ),
                                 ),
                               ],
