@@ -146,6 +146,23 @@ class Model4 extends BaseModel {
   HijriDate? get hijriDate => HijriDate.dateToHijri(date);
 
   @override
+  JsonMap toJson() => super.toJson()..addAll({
+    'locality': locality,
+    'witness': witness,
+    'responsible': responsible,
+    'firstName': firstName,
+    'fatherName': fatherName,
+    'grandfatherName': grandfatherName,
+    'lastName': lastName,
+    'identifierNo' : identifierNo,
+    'identifierFrom': identifierFrom,
+    'nationalId': nationalId,
+    'testimony': testimony,
+    'date': date.toIso8601String()
+  });
+
+
+  @override
   List<Object?> get props => super.props
     ..addAll([
       locality,

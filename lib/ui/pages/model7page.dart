@@ -336,7 +336,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                     mode: DateTimeFieldPickerMode.date,
                                     decoration: const InputDecoration(labelText: 'Enter Date'),
                                     onChanged: (date) => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(familyHeadDeathDate: date),
-                                    dateFormat: DateFormat('yyyy-MM-yy'),
+                                    dateFormat: DateFormat('yyyy-MM-yy', 'en'),
                                   ),
                                 ),
                               ],

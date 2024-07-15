@@ -43,17 +43,19 @@ abstract class PdfBuilder {
           textDirection: pw.TextDirection.rtl,
           child: pw.Padding(
             padding: const pw.EdgeInsets.all(32),
-            child: pw.Builder(builder: (context) {
-              if (model is Model1) return _getModel1Page(model);
-              if (model is Model2) return _getModel2Page(model);
-              if (model is Model3) return _getModel3Page(model);
-              if (model is Model4) return _getModel4Page(model);
-              if (model is Model5) return _getModel5Page(model);
-              if (model is Model6) return _getModel6Page(model);
-              if (model is Model7) return _getModel7Page(model);
+            child: pw.Builder(
+              builder: (context) {
+                if (model is Model1) return _getModel1Page(model);
+                if (model is Model2) return _getModel2Page(model);
+                if (model is Model3) return _getModel3Page(model);
+                if (model is Model4) return _getModel4Page(model);
+                if (model is Model5) return _getModel5Page(model);
+                if (model is Model6) return _getModel6Page(model);
+                if (model is Model7) return _getModel7Page(model);
 
-              return pw.Center(child: pw.Text('غير مصممة بعد'));
-            }),
+                return pw.Center(child: pw.Text('غير مصممة بعد'));
+              },
+            ),
           ),
         );
       },

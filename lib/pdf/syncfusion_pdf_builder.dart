@@ -37,10 +37,10 @@ abstract class SyncfusionPdfBuilder {
       form5Bytes ??= (await rootBundle.load('assets/pdf/5.pdf')).buffer.asUint8List();
       document = PdfDocument(inputBytes: form5Bytes!.toList());
     } else if (model is Model6) {
-      watermarkedDocument ??= await _getWatermarkedDocument();
+      watermarkedDocument = await _getWatermarkedDocument();
       document = watermarkedDocument;
     } else if (model is Model7) {
-      watermarkedDocument ??= await _getWatermarkedDocument();
+      watermarkedDocument = await _getWatermarkedDocument();
       document = watermarkedDocument;
     }
 

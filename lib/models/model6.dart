@@ -105,6 +105,19 @@ class Model6 extends BaseModel {
   }
 
   @override
+  JsonMap toJson() => super.toJson()
+    ..addAll({
+      'ownerName': ownerName,
+      'ownerPhone': ownerPhone,
+      'tenantName': tenantName,
+      'tenantPhone': tenantPhone,
+      'streetCode': streetCode,
+      'shopNo': shopNo,
+      'businessType': businessType,
+      'businessCategory': businessCategory,
+    });
+
+  @override
   List<Object?> get props => super.props
     ..addAll([
       ownerName,

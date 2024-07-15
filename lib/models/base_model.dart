@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:souq_aljomaa/utils.dart';
 
 abstract class BaseModel extends Equatable {
   const BaseModel({this.id, this.at, required this.scanner});
@@ -17,6 +19,15 @@ abstract class BaseModel extends Equatable {
   final DateTime? at;
 
   final String? scanner;
+
+  @mustCallSuper
+  JsonMap toJson() {
+    return {
+      'id': id,
+      'at': at?.toIso8601String(),
+      'scanner': scanner,
+    };
+  }
 
   @override
   List<Object?> get props => [id, at, scanner];

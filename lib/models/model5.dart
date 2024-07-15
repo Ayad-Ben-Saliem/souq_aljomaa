@@ -181,6 +181,28 @@ class Model5 extends BaseModel {
   HijriDate? get hijriDate => HijriDate.dateToHijri(date);
 
   @override
+  JsonMap toJson() => super.toJson()
+    ..addAll({
+      'locality': locality,
+      'witness': witness,
+      'responsible': responsible,
+      'firstName': firstName,
+      'fatherName': fatherName,
+      'grandfatherName': grandfatherName,
+      'lastName': lastName,
+      'motherName': motherName,
+      'identifierNo': identifierNo,
+      'nationalId': nationalId,
+      'familyBookletNumber': familyBookletNumber,
+      'familyDocumentNumber': familyDocumentNumber,
+      'issuePlace': issuePlace,
+      'issueDate': issueDate,
+      'residence': residence,
+      'nearestPoint': nearestPoint,
+      'date': date.toIso8601String()
+    });
+
+  @override
   List<Object?> get props => super.props
     ..addAll([
       locality,

@@ -284,13 +284,13 @@ class Model7 extends BaseModel {
     this.currentFamilyHeadName,
     required this.formFiller,
     this.notes,
-  })  : widows = List<Widow>.unmodifiable(widows),
+  })
+      : widows = List<Widow>.unmodifiable(widows),
         divorced = List<Divorced>.unmodifiable(divorced),
         lowIncome = List<LowIncome>.unmodifiable(lowIncome),
         unemployed = List<Unemployed>.unmodifiable(unemployed);
 
-  Model7.copyWith(
-    Model7 super.model, {
+  Model7.copyWith(Model7 super.model, {
     super.id,
     super.at,
     super.scanner,
@@ -309,7 +309,8 @@ class Model7 extends BaseModel {
     String? currentFamilyHeadName,
     FormFiller? formFiller,
     String? notes,
-  })  :
+  })
+      :
         streetNo = streetNo ?? model.streetNo,
         buildingNo = buildingNo ?? model.buildingNo,
         registrationNo = registrationNo ?? model.registrationNo,
@@ -392,23 +393,47 @@ class Model7 extends BaseModel {
     );
   }
 
+
   @override
-  List<Object?> get props => super.props
-    ..addAll([
-      streetNo,
-      buildingNo,
-      registrationNo,
-      familyHeadName,
-      malesCount,
-      femalesCount,
-      ...widows,
-      ...divorced,
-      disabilities,
-      ...lowIncome,
-      ...unemployed,
-      familyHeadDeathDate,
-      currentFamilyHeadName,
-      formFiller,
-      notes,
-    ]);
+  JsonMap toJson() =>
+      super.toJson()
+        ..addAll({
+          'streetNo': streetNo,
+          'buildingNo': buildingNo,
+          '': registrationNo,
+          'registrationNo': familyHeadName,
+          'malesCount': malesCount,
+          'femalesCount': femalesCount,
+          'widows': [for(final widow in widows) widow.toJson()],
+          'divorced': [for(final div in divorced) div.toJson()],
+          'disabilities': disabilities,
+          'lowIncome': [for(final low in lowIncome) low.toJson()],
+          'unemployed': [for(final unEmp in unemployed) unEmp.toJson()],
+          'familyHeadDeathDate': familyHeadDeathDate,
+          'currentFamilyHeadName': currentFamilyHeadName,
+          'formFiller': formFiller,
+          'notes': notes,
+        });
+
+
+  @override
+  List<Object?> get props =>
+      super.props
+        ..addAll([
+          streetNo,
+          buildingNo,
+          registrationNo,
+          familyHeadName,
+          malesCount,
+          femalesCount,
+          ...widows,
+          ...divorced,
+          disabilities,
+          ...lowIncome,
+          ...unemployed,
+          familyHeadDeathDate,
+          currentFamilyHeadName,
+          formFiller,
+          notes,
+        ]);
 }

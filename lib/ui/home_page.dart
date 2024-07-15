@@ -193,7 +193,10 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes, name: model.documentTitle),
+                  onPressed: () {
+                    print(bytes.length);
+                    Printing.layoutPdf(onLayout: (format) => bytes, name: model.documentTitle);
+                  },
                   icon: const Icon(Icons.print_outlined),
                 ),
                 const SizedBox(width: 16),
