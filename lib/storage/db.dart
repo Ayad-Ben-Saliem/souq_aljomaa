@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:souq_aljomaa/controllers/model_controller.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/models/model1.dart';
 import 'package:souq_aljomaa/models/model2.dart';
@@ -219,7 +218,7 @@ abstract class Database {
     return result;
   }
 
-  static Future<Iterable<BaseModel>> search({int limit = 10, int offset = 0, SearchOptions? searchOptions}) async {
+  static Future<Iterable<BaseModel>> search({required String searchText, int limit = 10, int offset = 0}) async {
     final model1Fields = [
       'locality',
       'witness',
@@ -294,25 +293,25 @@ abstract class Database {
 
     final result = _db.select('''
       SELECT id, at, 'Model1' AS table_name FROM Model1
-      ${_whereQuery(model1Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model1Fields, searchText)}
       UNION ALL
       SELECT id, at, 'Model2' AS table_name FROM Model2
-      ${_whereQuery(model234Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model234Fields, searchText)}
       UNION ALL
       SELECT id, at, 'Model3' AS table_name FROM Model3
-      ${_whereQuery(model234Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model234Fields, searchText)}
       UNION ALL
       SELECT id, at, 'Model4' AS table_name FROM Model4
-      ${_whereQuery(model234Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model234Fields, searchText)}
       UNION ALL
       SELECT id, at, 'Model5' AS table_name FROM Model5
-      ${_whereQuery(model5Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model5Fields, searchText)}
       UNION ALL
       SELECT id, at, 'Model6' AS table_name FROM Model6
-      ${_whereQuery(model6Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model6Fields, searchText)}
       UNION ALL
       SELECT id, at, 'Model7' AS table_name FROM Model7
-      ${_whereQuery(model7Fields, searchOptions?.text ?? '')}
+      ${_whereQuery(model7Fields, searchText)}
       ORDER BY at DESC
       LIMIT $limit OFFSET $offset
     ''');

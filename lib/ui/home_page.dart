@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
-import 'package:souq_aljomaa/controllers/model_controller.dart';
+import 'package:souq_aljomaa/controllers/restful_controller.dart';
+import 'package:souq_aljomaa/main.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/models/model1.dart';
 import 'package:souq_aljomaa/models/model2.dart';
@@ -25,8 +26,9 @@ import 'package:souq_aljomaa/ui/pages/model4page.dart';
 import 'package:souq_aljomaa/ui/pages/model5page.dart';
 import 'package:souq_aljomaa/ui/pages/model6page.dart';
 import 'package:souq_aljomaa/ui/pages/model7page.dart';
+import 'package:souq_aljomaa/ui/pages/settings_page.dart';
 
-final modelController = ModelController();
+final modelController = RestfulController();
 
 final searchText = StateProvider((ref) => '');
 
@@ -69,6 +71,13 @@ class _HomePageState extends ConsumerState<HomePage> {
               children: [
                 Row(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton(
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage())),
+                        icon: const Icon(Icons.settings),
+                      ),
+                    ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -89,8 +98,33 @@ class _HomePageState extends ConsumerState<HomePage> {
                   child: PagedListView<int, BaseModel>(
                     pagingController: _pagingController,
                     builderDelegate: PagedChildBuilderDelegate<BaseModel>(
-                      itemBuilder: (context, model, index) => ModelListTile(model: model),
-                    ),
+                        animateTransitions: true,
+                        itemBuilder: (context, model, index) => ModelListTile(model: model),
+                        firstPageErrorIndicatorBuilder: (context) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('ابحث لعرض النتائج', style: TextStyle(fontSize: 20)),
+                            ),
+                          );
+                        },
+                        newPageErrorIndicatorBuilder: (context) => Container(),
+                        noItemsFoundIndicatorBuilder: (context) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('لا يوجد نماذج لعرضها', style: TextStyle(fontSize: 20)),
+                            ),
+                          );
+                        },
+                        noMoreItemsIndicatorBuilder: (context) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('لا يوجد المزيد من النماذج لعرضها', style: TextStyle(fontSize: 20)),
+                            ),
+                          );
+                        }),
                   ),
                 ),
               ],
@@ -193,10 +227,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () {
-                    print(bytes.length);
-                    Printing.layoutPdf(onLayout: (format) => bytes, name: model.documentTitle);
-                  },
+                  onPressed: () => Printing.layoutPdf(onLayout: (format) => bytes, name: model.documentTitle),
                   icon: const Icon(Icons.print_outlined),
                 ),
                 const SizedBox(width: 16),
@@ -242,11 +273,16 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void _fetchData(int pageKey) async {
+    final showAllData = sharedPreferences.getBool('showAllData') == true;
+    String? text = ref.read(searchText);
+    if(!showAllData && text?.isEmpty == true) {
+      text = null;
+    }
     try {
       final models = await modelController.search(
+        searchText: text,
         limit: _pageSize,
         offset: pageKey,
-        searchOptions: SearchOptions(ref.read(searchText)),
       );
       if (models.isEmpty) {
         _pagingController.appendLastPage(models.toList());

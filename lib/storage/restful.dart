@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:souq_aljomaa/controllers/model_controller.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/models/model1.dart';
 import 'package:souq_aljomaa/models/model2.dart';
@@ -11,7 +10,17 @@ import 'package:souq_aljomaa/models/model7.dart';
 import 'package:souq_aljomaa/utils.dart';
 
 abstract class Restful {
-  static final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:5000'));
+  static late final Dio _dio;
+
+  static bool _initialized = false;
+
+  static void initialize(String serverUrl) async {
+    if (!_initialized) {
+      _dio = Dio(BaseOptions(baseUrl: serverUrl));
+      _initialized = true;
+    }
+  }
+
 
   // ========================= BaseModel =========================
 
@@ -57,9 +66,9 @@ abstract class Restful {
     return [];
   }
 
-  static Future<Iterable<BaseModel>> search({int limit = 10, int offset = 0, SearchOptions? searchOptions}) async {
+  static Future<Iterable<BaseModel>> search({String? searchText, int limit = 10, int offset = 0}) async {
     final response = await _dio.get('/search', queryParameters: {
-      'search_text': searchOptions?.text ?? '',
+      if (searchText != null) 'search_text': searchText,
       'limit': limit,
       'offset': offset,
     });
@@ -67,8 +76,8 @@ abstract class Restful {
     if (statusCode != null && statusCode >= 200 && statusCode < 300) {
       final result = <BaseModel>[];
       final data = response.data as JsonMap;
-      for(final modelType in data.keys) {
-        for(final modelData in data[modelType]) {
+      for (final modelType in data.keys) {
+        for (final modelData in data[modelType]) {
           result.add(_getModelFromData(modelType, modelData));
         }
       }
@@ -76,7 +85,7 @@ abstract class Restful {
     }
     return [];
   }
-  
+
   static Future<bool> deleteModel(BaseModel model) async {
     if (model.id == null) throw Exception('Invalid model!! cant delete model, id is null');
     return deleteModelById(model.documentType, model.id!);
