@@ -103,9 +103,27 @@ class _LoginFormState extends State<LoginForm> {
   VoidCallback? onLoginButtonClicked(WidgetRef ref) {
     if (ref.watch(username).isEmpty || ref.watch(password).isEmpty) return null;
 
-    return () async {
-      final user = await authController.login(ref.read(username), ref.read(password));
-      ref.read(currentUser.notifier).state = user;
+    return () {
+      authController.login(ref.read(username), ref.read(password)).then((user) {
+        ref.read(currentUser.notifier).state = user;
+
+        if (user == null) {
+          final width = MediaQuery.of(context).size.width;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.symmetric(horizontal: width / 2 - 256, vertical: 24),
+              content: const Column(
+                children: [
+                  Text('حدثت مشكلة في تسجيل الدخول'),
+                  Text('تأكد من أن الخادم يعمل بشكل جيد'),
+                  Text('أعد تشغيل الخادم إذا تطلب الأمر'),
+                ],
+              ),
+            ),
+          );
+        }
+      });
     };
   }
 }
