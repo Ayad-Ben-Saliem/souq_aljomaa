@@ -69,6 +69,8 @@ class User {
         'modelsModifier': modelsModifier,
       };
 
+  bool get canModifyModels => isAdmin || modelsModifier;
+
   @override
   String toString() => Utils.getPrettyString(toJson());
 }

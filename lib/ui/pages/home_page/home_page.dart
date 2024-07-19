@@ -177,7 +177,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: ref.watch(currentUser)?.modelsModifier == true ? addModelsButton() : null,
+      floatingActionButton: ref.watch(currentUser)?.canModifyModels == true ? addModelsButton() : null,
     );
   }
 
@@ -357,7 +357,6 @@ class ModelListTile extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return InkWell(
-          onDoubleTap: ref.watch(currentUser)?.modelsModifier == true ? () => Navigator.push(context, MaterialPageRoute(builder: (_) => editPage)) : null,
           onTap: () {
             if (ref.read(currentModel) == model) {
               ref.read(currentModel.notifier).state = null;
@@ -365,6 +364,7 @@ class ModelListTile extends StatelessWidget {
               ref.read(currentModel.notifier).state = model;
             }
           },
+          onDoubleTap: ref.watch(currentUser)?.canModifyModels == true ? () => navigateToPage(context, editPage) : null,
           child: ListTile(
             title: CustomText(title),
             subtitle: Text(trailing, style: const TextStyle(fontSize: 16)),
@@ -383,4 +383,8 @@ class ModelListTile extends StatelessWidget {
       },
     );
   }
+}
+
+void navigateToPage(BuildContext context, Widget page) {
+  Navigator.push(context, MaterialPageRoute(builder: (_) => page));
 }
