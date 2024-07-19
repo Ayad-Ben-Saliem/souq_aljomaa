@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:souq_aljomaa/controllers/restful/restful_auth_controller.dart';
 import 'package:souq_aljomaa/main.dart';

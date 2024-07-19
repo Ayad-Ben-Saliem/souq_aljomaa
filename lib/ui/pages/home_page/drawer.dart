@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:souq_aljomaa/data_provider/restful.dart';
 import 'package:souq_aljomaa/ui/app.dart';
 import 'package:souq_aljomaa/ui/pages/settings_page.dart';
 import 'package:souq_aljomaa/ui/pages/users/users_page.dart';

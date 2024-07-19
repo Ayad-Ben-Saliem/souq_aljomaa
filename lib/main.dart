@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider_linux/path_provider_linux.dart';
 import 'package:path_provider_windows/path_provider_windows.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:souq_aljomaa/data_provider/db.dart';
 import 'package:souq_aljomaa/data_provider/restful.dart';
 import 'package:souq_aljomaa/ui/app.dart';
 import 'package:intl/intl_standalone.dart';

@@ -1,13 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
-import 'package:souq_aljomaa/controllers/restful/restful_auth_controller.dart';
 import 'package:souq_aljomaa/controllers/restful/restful_model_controller.dart';
 import 'package:souq_aljomaa/controllers/restful/restful_user_controller.dart';
 import 'package:souq_aljomaa/main.dart';

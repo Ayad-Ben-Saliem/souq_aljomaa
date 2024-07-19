@@ -1,11 +1,4 @@
 import 'package:souq_aljomaa/models/base_model.dart';
-import 'package:souq_aljomaa/models/model1.dart';
-import 'package:souq_aljomaa/models/model2.dart';
-import 'package:souq_aljomaa/models/model3.dart';
-import 'package:souq_aljomaa/models/model4.dart';
-import 'package:souq_aljomaa/models/model5.dart';
-import 'package:souq_aljomaa/models/model6.dart';
-import 'package:souq_aljomaa/models/model7.dart';
 import 'package:souq_aljomaa/data_provider/restful.dart';
 import 'package:souq_aljomaa/utils.dart';
 
