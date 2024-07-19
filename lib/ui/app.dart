@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:souq_aljomaa/controllers/restful/restful_auth_controller.dart';
 import 'package:souq_aljomaa/main.dart';
-import 'package:souq_aljomaa/ui/home_page.dart';
+import 'package:souq_aljomaa/models/user.dart';
+import 'package:souq_aljomaa/ui/pages/home_page/home_page.dart';
+import 'package:souq_aljomaa/ui/pages/loading_page.dart';
+import 'package:souq_aljomaa/ui/pages/login_page.dart';
 import 'package:souq_aljomaa/ui/pages/settings_page.dart';
 import 'package:window_manager/window_manager.dart';
+
+final authController = RestfulAuthController();
+final autoLoginUser = FutureProvider<User?>((ref) async {
+  if (!sharedPreferences.containsKey('access_token')) return null;
+
+  return authController.autoLogin(sharedPreferences.getString('access_token')!);
+});
+final currentUser = StateProvider<User?>((ref) {
+  if(ref.watch(autoLoginUser).hasValue) return ref.watch(autoLoginUser).value;
+  return null;
+});
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -65,12 +82,27 @@ class _AppState extends State<App> with WindowListener {
       debugShowCheckedModeBanner: false,
       home: Directionality(
         textDirection: TextDirection.rtl,
-        child: Builder(builder: (context) {
-          final serverUrl = sharedPreferences.getString('serverUrl');
-          if (serverUrl == null || serverUrl.isEmpty) return const SettingsPage();
+        child: Builder(
+          builder: (context) {
+            final serverUrl = sharedPreferences.getString('serverUrl');
+            if (serverUrl == null || serverUrl.isEmpty) return const SettingsPage();
 
-          return const HomePage();
-        }),
+            return Consumer(
+              builder: (context, ref, child) {
+                final gettingUser = ref.watch(autoLoginUser);
+                return gettingUser.when(
+                  loading: () => const LoadingPage(),
+                  error: (err, stack) => Text('Error: $err'),
+                  data: (value) {
+                    if (ref.watch(currentUser) == null) return const LoginPage();
+
+                    return const HomePage();
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

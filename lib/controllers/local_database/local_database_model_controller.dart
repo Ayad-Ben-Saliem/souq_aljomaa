@@ -1,6 +1,5 @@
-import 'package:souq_aljomaa/controllers/restful_controller.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
-import 'package:souq_aljomaa/storage/db.dart';
+import 'package:souq_aljomaa/data_provider/db.dart';
 
 class DatabaseController {
   final _models = <BaseModel>{};

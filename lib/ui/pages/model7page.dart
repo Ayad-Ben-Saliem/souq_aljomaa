@@ -7,10 +7,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:souq_aljomaa/models/model7.dart';
-import 'package:souq_aljomaa/storage/file_manager.dart';
+import 'package:souq_aljomaa/data_provider/file_manager.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/custom_text_field.dart';
-import 'package:souq_aljomaa/ui/home_page.dart';
+import 'package:souq_aljomaa/ui/pages/home_page/home_page.dart';
 
 final _modelProvider = StateProvider((ref) => _initialValue);
 
@@ -475,7 +475,7 @@ class _Model7PageState extends ConsumerState<Model7Page> {
                                 if (model.scanner?.isNotEmpty == true) {
                                   model = model.copyWith(scanner: await FileManager.saveImage(model.scanner!));
                                 }
-                                modelController.save(model).then((value) {
+                                modelController.addModel(model).then((value) {
                                   Navigator.pop(context);
 
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: CustomText('تم الحفظ بنجاح')));

@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
-import 'package:souq_aljomaa/controllers/restful_controller.dart';
+import 'package:souq_aljomaa/controllers/restful/restful_auth_controller.dart';
+import 'package:souq_aljomaa/controllers/restful/restful_model_controller.dart';
+import 'package:souq_aljomaa/controllers/restful/restful_user_controller.dart';
 import 'package:souq_aljomaa/main.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/models/model1.dart';
@@ -17,8 +20,10 @@ import 'package:souq_aljomaa/models/model5.dart';
 import 'package:souq_aljomaa/models/model6.dart';
 import 'package:souq_aljomaa/models/model7.dart';
 import 'package:souq_aljomaa/pdf/syncfusion_pdf_builder.dart';
+import 'package:souq_aljomaa/ui/app.dart';
 import 'package:souq_aljomaa/ui/custom_tab_view.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
+import 'package:souq_aljomaa/ui/pages/home_page/drawer.dart';
 import 'package:souq_aljomaa/ui/pages/model1page.dart';
 import 'package:souq_aljomaa/ui/pages/model2page.dart';
 import 'package:souq_aljomaa/ui/pages/model3page.dart';
@@ -26,9 +31,9 @@ import 'package:souq_aljomaa/ui/pages/model4page.dart';
 import 'package:souq_aljomaa/ui/pages/model5page.dart';
 import 'package:souq_aljomaa/ui/pages/model6page.dart';
 import 'package:souq_aljomaa/ui/pages/model7page.dart';
-import 'package:souq_aljomaa/ui/pages/settings_page.dart';
 
-final modelController = RestfulController();
+final userController = RestfulUserController();
+final modelController = RestfulModelController();
 
 final searchText = StateProvider((ref) => '');
 
@@ -36,7 +41,7 @@ final currentModel = StateProvider<BaseModel?>((ref) => null);
 
 final pdfController = PdfViewerController();
 
-final _pagingController = PagingController<int, BaseModel>(firstPageKey: 0);
+final pagingController = PagingController<int, BaseModel>(firstPageKey: 0);
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -46,7 +51,7 @@ class HomePage extends ConsumerStatefulWidget {
 
   static void refresh(WidgetRef ref) {
     ref.read(currentModel.notifier).state = null;
-    _pagingController.refresh();
+    pagingController.refresh();
   }
 }
 
@@ -55,7 +60,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   void initState() {
-    _pagingController.addPageRequestListener(_fetchData);
+    pagingController.addPageRequestListener(_fetchData);
     super.initState();
   }
 
@@ -63,6 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     ref.listen(searchText, (previous, next) => HomePage.refresh(ref));
     return Scaffold(
+      drawer: const HomePageDrawer(),
       body: Row(
         children: [
           ConstrainedBox(
@@ -71,13 +77,17 @@ class _HomePageState extends ConsumerState<HomePage> {
               children: [
                 Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage())),
-                        icon: const Icon(Icons.settings),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Builder(
+                          builder: (context) {
+                            return IconButton(
+                              onPressed: () => Scaffold.of(context).openDrawer(),
+                              icon: const Icon(Icons.menu),
+                            );
+                          },
+                        ),
                       ),
-                    ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -90,13 +100,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: IconButton(onPressed: () => _pagingController.refresh(), icon: const Icon(Icons.refresh)),
+                      child: IconButton(onPressed: () => pagingController.refresh(), icon: const Icon(Icons.refresh)),
                     ),
                   ],
                 ),
                 Flexible(
                   child: PagedListView<int, BaseModel>(
-                    pagingController: _pagingController,
+                    pagingController: pagingController,
                     builderDelegate: PagedChildBuilderDelegate<BaseModel>(
                         animateTransitions: true,
                         itemBuilder: (context, model, index) => ModelListTile(model: model),
@@ -169,50 +179,54 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return Dialog(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: CustomText('اختر نموذجاً'),
-                      ),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 16,
-                        children: [
-                          _button(context, Model1.title, const Model1Page()),
-                          const SizedBox(width: 8),
-                          _button(context, Model2.title, const Model2Page()),
-                          const SizedBox(width: 8),
-                          _button(context, Model3.title, const Model3Page()),
-                          const SizedBox(width: 8),
-                          _button(context, Model4.title, const Model4Page()),
-                          const SizedBox(width: 8),
-                          _button(context, Model5.title, const Model5Page()),
-                          const SizedBox(width: 8),
-                          _button(context, Model6.title, const Model6Page()),
-                          const SizedBox(width: 8),
-                          _button(context, Model7.title, const Model7Page()),
-                        ],
-                      ),
-                    ],
-                  ),
+      floatingActionButton: ref.watch(currentUser)?.modelsModifier == true ? addModelsButton() : null,
+    );
+  }
+
+  Widget addModelsButton() {
+    return FloatingActionButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: CustomText('اختر نموذجاً'),
+                    ),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 16,
+                      children: [
+                        _button(context, Model1.title, const Model1Page()),
+                        const SizedBox(width: 8),
+                        _button(context, Model2.title, const Model2Page()),
+                        const SizedBox(width: 8),
+                        _button(context, Model3.title, const Model3Page()),
+                        const SizedBox(width: 8),
+                        _button(context, Model4.title, const Model4Page()),
+                        const SizedBox(width: 8),
+                        _button(context, Model5.title, const Model5Page()),
+                        const SizedBox(width: 8),
+                        _button(context, Model6.title, const Model6Page()),
+                        const SizedBox(width: 8),
+                        _button(context, Model7.title, const Model7Page()),
+                      ],
+                    ),
+                  ],
                 ),
-              );
-            },
-          );
-        },
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.add),
-      ),
+              ),
+            );
+          },
+        );
+      },
+      backgroundColor: Colors.green,
+      child: const Icon(Icons.add),
     );
   }
 
@@ -275,7 +289,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   void _fetchData(int pageKey) async {
     final showAllData = sharedPreferences.getBool('showAllData') == true;
     String? text = ref.read(searchText);
-    if(!showAllData && text?.isEmpty == true) {
+    if (!showAllData && text?.isEmpty == true) {
       text = null;
     }
     try {
@@ -285,20 +299,20 @@ class _HomePageState extends ConsumerState<HomePage> {
         offset: pageKey,
       );
       if (models.isEmpty) {
-        _pagingController.appendLastPage(models.toList());
+        pagingController.appendLastPage(models.toList());
       } else {
-        _pagingController.appendPage(models.toList(), pageKey + models.length);
+        pagingController.appendPage(models.toList(), pageKey + models.length);
       }
     } catch (error) {
-      _pagingController.error = error;
+      pagingController.error = error;
     }
   }
 
-  @override
-  void dispose() {
-    _pagingController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   // pagingController.dispose();
+  //   super.dispose();
+  // }
 }
 
 class ModelListTile extends StatelessWidget {

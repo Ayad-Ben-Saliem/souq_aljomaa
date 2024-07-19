@@ -6,10 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jhijri_picker/_src/_jWidgets.dart';
 import 'package:souq_aljomaa/main.dart';
 import 'package:souq_aljomaa/models/model1.dart';
-import 'package:souq_aljomaa/storage/file_manager.dart';
+import 'package:souq_aljomaa/data_provider/file_manager.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/custom_text_field.dart';
-import 'package:souq_aljomaa/ui/home_page.dart';
+import 'package:souq_aljomaa/ui/pages/home_page/home_page.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 final _modelProvider = StateProvider((ref) => _initialValue);
@@ -298,8 +298,8 @@ class _Model1PageState extends ConsumerState<Model1Page> {
                                             pickerType: PickerType.JHijri,
                                             buttons: const SizedBox(),
                                             primaryColor: Theme.of(context).colorScheme.primary,
-                                            calendarTextColor: Theme.of(context).colorScheme.onBackground,
-                                            backgroundColor: Theme.of(context).colorScheme.background,
+                                            calendarTextColor: Theme.of(context).colorScheme.onSurface,
+                                            backgroundColor: Theme.of(context).colorScheme.surface,
                                             borderRadius: const Radius.circular(10),
                                             headerTitle: const Center(
                                               child: Text("التقويم الهجري"),
@@ -409,7 +409,7 @@ class _Model1PageState extends ConsumerState<Model1Page> {
                                 model = model.copyWith(scanner: await FileManager.saveImage(model.scanner!));
                               }
 
-                              modelController.save(model).then((value) {
+                              modelController.addModel(model).then((value) {
                                 Navigator.pop(context);
 
                                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: CustomText('تم الحفظ بنجاح')));

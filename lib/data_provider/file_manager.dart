@@ -27,7 +27,6 @@ abstract class FileManager {
 
   static Future<String> saveImage(String imageDir) async {
     final imagesDirectory = await create(await imagesDir);
-    print(imagesDirectory);
     final fileName = path.basename(imageDir);
     final newPath = path.join(imagesDirectory,fileName);
     await File(imageDir).copy(newPath);

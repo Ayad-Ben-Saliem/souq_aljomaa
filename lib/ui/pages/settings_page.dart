@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:souq_aljomaa/main.dart';
 import 'package:souq_aljomaa/models/settings.dart';
+import 'package:souq_aljomaa/ui/backup_dialog.dart';
 import 'package:souq_aljomaa/ui/custom_text_field.dart';
+import 'package:souq_aljomaa/ui/pages/home_page/home_page.dart';
 
 var existingSettings = Settings(
   serverUrl: sharedPreferences.getString('serverUrl'),
@@ -67,6 +69,9 @@ class SettingsPage extends StatelessWidget {
                         }
                         if (settings.showAllData != existingSettings.showAllData) {
                           sharedPreferences.setBool('showAllData', settings.showAllData);
+
+                          // refresh home page models paging
+                          pagingController.refresh();
                         }
                         existingSettings = settings;
 
@@ -143,6 +148,15 @@ class SettingsForm extends StatelessWidget {
                 },
               );
             },
+          ),
+        ),
+        const SizedBox(height: 24),
+        const Text('الحصول على نسخة احتياطية من جميع البيانات', style: defaultTextStyle),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ElevatedButton(
+            onPressed: () => BackupDialog.show(context),
+            child: const Text('نسخ احتياطي', style: TextStyle(fontSize: 20)),
           ),
         ),
       ],

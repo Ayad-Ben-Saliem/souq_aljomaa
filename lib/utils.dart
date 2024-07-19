@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 typedef JsonMap = Map<String, dynamic>;
+typedef Pair<K, T> = MapEntry<K, T>;
 
 class Utils {
   Utils.pushPage(BuildContext context, Widget page) {
