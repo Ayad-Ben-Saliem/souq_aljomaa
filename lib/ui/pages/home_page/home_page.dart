@@ -75,17 +75,17 @@ class _HomePageState extends ConsumerState<HomePage> {
               children: [
                 Row(
                   children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Builder(
-                          builder: (context) {
-                            return IconButton(
-                              onPressed: () => Scaffold.of(context).openDrawer(),
-                              icon: const Icon(Icons.menu),
-                            );
-                          },
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Builder(
+                        builder: (context) {
+                          return IconButton(
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                            icon: const Icon(Icons.menu),
+                          );
+                        },
                       ),
+                    ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -306,11 +306,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  // @override
-  // void dispose() {
-  //   // pagingController.dispose();
-  //   super.dispose();
-  // }
+// @override
+// void dispose() {
+//   // pagingController.dispose();
+//   super.dispose();
+// }
 }
 
 class ModelListTile extends StatelessWidget {
@@ -359,6 +359,14 @@ class ModelListTile extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return InkWell(
+          onDoubleTap: ref.watch(currentUser)?.modelsModifier == true ? () => Navigator.push(context, MaterialPageRoute(builder: (_) => editPage)) : null,
+          onTap: () {
+            if (ref.read(currentModel) == model) {
+              ref.read(currentModel.notifier).state = null;
+            } else {
+              ref.read(currentModel.notifier).state = model;
+            }
+          },
           child: ListTile(
             title: CustomText(title),
             subtitle: Text(trailing, style: const TextStyle(fontSize: 16)),
@@ -373,16 +381,6 @@ class ModelListTile extends StatelessWidget {
             selectedTileColor: Colors.blue,
             selectedColor: Colors.white,
           ),
-          onDoubleTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => editPage));
-          },
-          onTap: () {
-            if (ref.read(currentModel) == model) {
-              ref.read(currentModel.notifier).state = null;
-            } else {
-              ref.read(currentModel.notifier).state = model;
-            }
-          },
         );
       },
     );
