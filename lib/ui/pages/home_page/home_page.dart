@@ -189,30 +189,25 @@ class _HomePageState extends ConsumerState<HomePage> {
           builder: (context) {
             return Dialog(
               child: Padding(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(20),
                       child: CustomText('اختر نموذجاً'),
                     ),
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 16,
+                      spacing: 24,
+                      runSpacing: 24,
+                      alignment: WrapAlignment.center,
                       children: [
                         _button(context, Model1.title, const Model1Page()),
-                        const SizedBox(width: 8),
                         _button(context, Model2.title, const Model2Page()),
-                        const SizedBox(width: 8),
                         _button(context, Model3.title, const Model3Page()),
-                        const SizedBox(width: 8),
                         _button(context, Model4.title, const Model4Page()),
-                        const SizedBox(width: 8),
                         _button(context, Model5.title, const Model5Page()),
-                        const SizedBox(width: 8),
                         _button(context, Model6.title, const Model6Page()),
-                        const SizedBox(width: 8),
                         _button(context, Model7.title, const Model7Page()),
                       ],
                     ),
@@ -276,11 +271,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Widget _button(BuildContext context, String title, Widget page) {
-    return ElevatedButton(
-      onPressed: () => Navigator.of(context)
-        ..pop()
-        ..push(MaterialPageRoute(builder: (_) => page)),
-      child: CustomText(title),
+    return SizedBox(
+      height: 50,
+      child: ElevatedButton(
+        onPressed: () => Navigator.of(context)
+          ..pop()
+          ..push(MaterialPageRoute(builder: (_) => page)),
+        child: CustomText(title),
+      ),
     );
   }
 
