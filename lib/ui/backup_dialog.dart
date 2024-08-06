@@ -23,7 +23,7 @@ class BackupDialog extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 512, maxHeight: 512),
           child: Scaffold(
-            appBar: AppBar(title: const Text('النسخ الإحتياطي'), centerTitle: true),
+            appBar: AppBar(title: const CustomText('النسخ الإحتياطي'), centerTitle: true),
             body: Form(
               key: _formKey,
               child: Column(
@@ -40,14 +40,14 @@ class BackupDialog extends StatelessWidget {
                           ).then((txt) {
                             if (txt != null) ref.read(backupDirectory.notifier).state = txt;
                           }),
-                          child: const Text('اختر مسار حفظ البيانات', style: TextStyle(fontSize: 20)),
+                          child: const CustomText('اختر مسار حفظ البيانات'),
                         );
                       },
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Consumer(builder: (context, ref, child) => Text(ref.watch(backupDirectory))),
+                    child: Consumer(builder: (context, ref, child) => CustomText(ref.watch(backupDirectory))),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(24),
@@ -93,7 +93,7 @@ class BackupDialog extends StatelessWidget {
                                     });
                                   },
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                            child: const Text('نسخ احتياطي', style: TextStyle(fontSize: 20)),
+                            child: const CustomText('نسخ احتياطي'),
                           ),
                         );
                       },

@@ -9,31 +9,31 @@ import 'package:souq_aljomaa/ui/pages/home_page/home_page.dart';
 
 var existingSettings = Settings(
   serverUrl: sharedPreferences.getString('serverUrl'),
-  showAllData: sharedPreferences.getBool('showAllData') ?? false,
 );
 
 final editingSetting = StateProvider((_) => existingSettings);
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+class ServerUrlPage extends StatelessWidget {
+  const ServerUrlPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: const Text('الاعدادات'), centerTitle: true),
+        appBar: AppBar(title: const Text('اعدادات الخادم'), centerTitle: true),
         body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 24, left: 24, right: 24),
-                  child: SettingsForm(),
-                ),
+            const Spacer(),
+            const SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(top: 24, left: 24, right: 24),
+                child: SettingsForm(),
               ),
             ),
+            const Spacer(),
             const Divider(height: 0),
             _buttons(context),
           ],
@@ -65,12 +65,6 @@ class SettingsPage extends StatelessWidget {
                     : () {
                         if (settings.serverUrl != existingSettings.serverUrl) {
                           sharedPreferences.setString('serverUrl', settings.serverUrl!);
-                        }
-                        if (settings.showAllData != existingSettings.showAllData) {
-                          sharedPreferences.setBool('showAllData', settings.showAllData);
-
-                          // refresh home page models paging
-                          pagingController.refresh();
                         }
                         existingSettings = settings;
 
@@ -106,7 +100,8 @@ class SettingsForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const CustomText('رابط الخادم الرئيسي (مثلا: http://192.168.1.1:5000)'),
         ConstrainedBox(
@@ -131,31 +126,6 @@ class SettingsForm extends StatelessWidget {
                 );
               },
             ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        const CustomText('إذا كنت تريد عرض جميع النماذج عند عدم البحث عن شيء معين'),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Consumer(
-            builder: (context, ref, child) {
-              return Switch(
-                value: ref.watch(editingSetting.select((settings) => settings.showAllData)),
-                onChanged: (active) {
-                  final settings = ref.read(editingSetting.notifier);
-                  settings.state = settings.state.copyWith(showAllData: active);
-                },
-              );
-            },
-          ),
-        ),
-        const SizedBox(height: 24),
-        const CustomText('الحصول على نسخة احتياطية من جميع البيانات'),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: () => BackupDialog.show(context),
-            child: const CustomText('نسخ احتياطي'),
           ),
         ),
       ],

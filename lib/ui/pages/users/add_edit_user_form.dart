@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:souq_aljomaa/models/user.dart';
+import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/custom_text_field.dart';
 import 'package:souq_aljomaa/ui/pages/home_page/home_page.dart';
 import 'package:souq_aljomaa/ui/pages/users/users_page.dart';
@@ -39,9 +40,8 @@ class _AddEditUserFormState extends ConsumerState<AddEditUserForm> {
         constraints: const BoxConstraints(maxWidth: 512, maxHeight: 720),
         child: Scaffold(
           appBar: AppBar(
-            title: Text(
+            title: CustomText(
               widget.user == null ? 'إضافة مستخدم' : 'تعديل مستخدم (${widget.user?.fullName})',
-              style: const TextStyle(fontSize: 20),
             ),
             centerTitle: true,
           ),
@@ -170,7 +170,7 @@ class _AddEditUserFormState extends ConsumerState<AddEditUserForm> {
                             });
                           }
                         },
-                        child: const Text('حفظ', style: TextStyle(fontSize: 20)),
+                        child: const CustomText('حفظ'),
                       ),
                     ),
                   )

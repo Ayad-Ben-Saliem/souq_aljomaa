@@ -112,7 +112,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: Text('ابحث لعرض النتائج', style: TextStyle(fontSize: 20)),
+                              child: CustomText('ابحث لعرض النتائج'),
                             ),
                           );
                         },
@@ -121,7 +121,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: Text('لا يوجد نماذج لعرضها', style: TextStyle(fontSize: 20)),
+                              child: CustomText('لا يوجد نماذج لعرضها'),
                             ),
                           );
                         },
@@ -129,7 +129,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: Text('لا يوجد المزيد من النماذج لعرضها', style: TextStyle(fontSize: 20)),
+                              child: CustomText('لا يوجد المزيد من النماذج لعرضها'),
                             ),
                           );
                         }),
@@ -143,7 +143,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Consumer(
               builder: (context, ref, _) {
                 final model = ref.watch(currentModel);
-                if (model == null) return const Center(child: Text('اختر نموذج لعرضه', style: TextStyle(fontSize: 24)));
+                if (model == null) return const Center(child: CustomText('اختر نموذج لعرضه'));
 
                 return FutureBuilder(
                   future: SyncfusionPdfBuilder.getDocument(model),
@@ -159,13 +159,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                         } else if (snapshot.hasError) {
                           return Column(
                             children: [
-                              Text('${snapshot.error}'),
+                              CustomText('${snapshot.error}'),
                               const Divider(),
-                              Text('${snapshot.stackTrace}'),
+                              CustomText('${snapshot.stackTrace}'),
                             ],
                           );
                         } else {
-                          return const Center(child: Text('لا يوجد بيانات!!!'));
+                          return const Center(child: CustomText('لا يوجد بيانات!!!'));
                         }
                       case ConnectionState.none:
                         return Container();
@@ -251,7 +251,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           );
         }
-        return const SizedBox(height: kToolbarHeight, child: Center(child: Text('Scanner Image')));
+        return const SizedBox(height: kToolbarHeight, child: Center(child: CustomText('الصورة الممسوحة')));
       },
       pageBuilder: (context, index) {
         if (index == 0) {
@@ -356,6 +356,7 @@ class ModelListTile extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, _) {
+        final canModifyModels = ref.watch(currentUser)?.canModifyModels == true;
         return InkWell(
           onTap: () {
             if (ref.read(currentModel) == model) {
@@ -364,17 +365,19 @@ class ModelListTile extends StatelessWidget {
               ref.read(currentModel.notifier).state = model;
             }
           },
-          onDoubleTap: ref.watch(currentUser)?.canModifyModels == true ? () => navigateToPage(context, editPage) : null,
+          onDoubleTap: canModifyModels ? () => navigateToPage(context, editPage) : null,
           child: ListTile(
             title: CustomText(title),
-            subtitle: Text(trailing, style: const TextStyle(fontSize: 16)),
-            trailing: IconButton(
-              onPressed: () {
-                modelController.deleteModel(model);
-                HomePage.refresh(ref);
-              },
-              icon: const Icon(Icons.delete_outline),
-            ),
+            subtitle: CustomText(trailing, style: const TextStyle(fontSize: 16)),
+            trailing: canModifyModels
+                ? IconButton(
+                    onPressed: () {
+                      modelController.deleteModel(model);
+                      HomePage.refresh(ref);
+                    },
+                    icon: const Icon(Icons.delete_outline),
+                  )
+                : null,
             selected: ref.watch(currentModel) == model,
             selectedTileColor: Colors.blue,
             selectedColor: Colors.white,

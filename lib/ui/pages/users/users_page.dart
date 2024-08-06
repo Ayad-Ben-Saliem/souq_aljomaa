@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:souq_aljomaa/models/user.dart';
+import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/pages/home_page/home_page.dart';
 import 'package:souq_aljomaa/ui/pages/users/add_edit_user_form.dart';
 
@@ -15,7 +16,7 @@ class UsersPage extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('المستخدمين'),
+          title: const CustomText('المستخدمين'),
           centerTitle: true,
         ),
         body: const UsersView(),
@@ -39,7 +40,7 @@ class UsersView extends ConsumerWidget {
 
     return gettingUsers.when(
       loading: () => const CircularProgressIndicator(),
-      error: (err, stack) => Text('Error: $err'),
+      error: (err, stack) => CustomText('خطأ: $err'),
       data: (users) {
         final crossAxisCount = MediaQuery.of(context).size.width / 256;
         return GridView.count(
@@ -64,9 +65,9 @@ class UserCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Spacer(),
-          Text(user.name ?? 'User', style: const TextStyle(fontSize: 20)),
+          CustomText(user.name ?? 'مستخدم'),
           const SizedBox(height: 8),
-          Text('(${user.username!})'),
+          CustomText('(${user.username!})'),
           const Spacer(),
           Row(
             children: [
@@ -85,7 +86,7 @@ class UserCard extends StatelessWidget {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('حذف', style: TextStyle(color: Colors.red)),
+                      CustomText('حذف', style: TextStyle(color: Colors.red)),
                       SizedBox(width: 8),
                       Icon(Icons.delete, color: Colors.red),
                     ],
@@ -101,8 +102,8 @@ class UserCard extends StatelessWidget {
 
   Widget deleteUserDialog(BuildContext context) {
     return AlertDialog(
-      title: const Text('حذف مستخدم'),
-      content: Text('هل أنت متأكد من أنك تريد فعلا حذف المستخدم ${user.fullName}'),
+      title: const CustomText('حذف مستخدم'),
+      content: CustomText('هل أنت متأكد من أنك تريد فعلا حذف المستخدم ${user.fullName}'),
       actions: [
         ElevatedButton(
           onPressed: () {
@@ -112,19 +113,19 @@ class UserCard extends StatelessWidget {
                 SnackBar(
                   behavior: SnackBarBehavior.floating,
                   margin: EdgeInsets.symmetric(horizontal: width / 2 - 128, vertical: 24),
-                  content: Center(child: Text(deleted ? 'تم حذف المستخدم بنجاح' : 'لم يتم حذف المستخدم')),
+                  content: Center(child: CustomText(deleted ? 'تم حذف المستخدم بنجاح' : 'لم يتم حذف المستخدم')),
                 ),
               );
             });
             Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text('نعم'),
+          child: const CustomText('نعم'),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(context),
           style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
-          child: const Text('لا'),
+          child: const CustomText('لا'),
         ),
       ],
     );

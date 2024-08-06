@@ -303,11 +303,11 @@ abstract class Restful {
     return false;
   }
 
-  static Future<bool> text() async {
+  static Future<bool> checkServer() async {
     try {
       final response = await _dio.get('');
       final statusCode = response.statusCode;
-      return statusCode != null && statusCode >= 200 && statusCode < 300;
+      return statusCode != null && statusCode == 200 && response.data == 'OK';
     } catch (e) {
       return false;
     }
