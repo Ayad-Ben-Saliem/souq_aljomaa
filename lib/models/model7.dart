@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/utils.dart';
@@ -11,7 +13,6 @@ class Widow extends Equatable {
   const Widow({this.name, required this.malesCount, required this.femalesCount});
 
   factory Widow.fromJson(JsonMap json) {
-    // print('json: $json');
     return Widow(
       name: json['name'],
       malesCount: json['malesCount'],
@@ -284,13 +285,13 @@ class Model7 extends BaseModel {
     this.currentFamilyHeadName,
     required this.formFiller,
     this.notes,
-  })
-      : widows = List<Widow>.unmodifiable(widows),
+  })  : widows = List<Widow>.unmodifiable(widows),
         divorced = List<Divorced>.unmodifiable(divorced),
         lowIncome = List<LowIncome>.unmodifiable(lowIncome),
         unemployed = List<Unemployed>.unmodifiable(unemployed);
 
-  Model7.copyWith(Model7 super.model, {
+  Model7.copyWith(
+    Model7 super.model, {
     super.id,
     super.at,
     super.scanner,
@@ -309,9 +310,7 @@ class Model7 extends BaseModel {
     String? currentFamilyHeadName,
     FormFiller? formFiller,
     String? notes,
-  })
-      :
-        streetNo = streetNo ?? model.streetNo,
+  })  : streetNo = streetNo ?? model.streetNo,
         buildingNo = buildingNo ?? model.buildingNo,
         registrationNo = registrationNo ?? model.registrationNo,
         familyHeadName = familyHeadName ?? model.familyHeadName,
@@ -381,59 +380,55 @@ class Model7 extends BaseModel {
       familyHeadName: json['familyHeadName'],
       malesCount: json['malesCount'],
       femalesCount: json['femalesCount'],
-      widows: List<Widow>.unmodifiable([for (final widow in json['widows']) Widow.fromJson(widow)]),
-      divorced: List<Divorced>.unmodifiable([for (final divorced in json['divorced']) Divorced.fromJson(divorced)]),
+      widows: List<Widow>.unmodifiable([for (final widow in jsonDecode(json['widows'] ?? '[]')) Widow.fromJson(widow)]),
+      divorced: List<Divorced>.unmodifiable([for (final divorced in jsonDecode(json['divorced'] ?? '[]')) Divorced.fromJson(divorced)]),
       disabilities: Disabilities.tryFromJson(json['disabilities']),
-      lowIncome: List<LowIncome>.unmodifiable([for (final lowIncome in json['lowIncome']) LowIncome.fromJson(lowIncome)]),
-      unemployed: List<Unemployed>.unmodifiable([for (final unemployed in json['unemployed']) Unemployed.fromJson(unemployed)]),
+      lowIncome: List<LowIncome>.unmodifiable([for (final lowIncome in jsonDecode(json['lowIncome'] ?? '[]')) LowIncome.fromJson(lowIncome)]),
+      unemployed: List<Unemployed>.unmodifiable([for (final unemployed in jsonDecode(json['unemployed'] ?? '[]')) Unemployed.fromJson(unemployed)]),
       familyHeadDeathDate: DateTime.tryParse(json['familyHeadDeathDate'] ?? ''),
       currentFamilyHeadName: json['currentFamilyHeadName'],
-      formFiller: FormFiller.fromJson(json['formFiller']),
+      formFiller: FormFiller.fromJson(jsonDecode(json['formFiller'])),
       notes: json['notes'],
     );
   }
 
+  @override
+  JsonMap toJson() => super.toJson()
+    ..addAll({
+      'streetNo': streetNo,
+      'buildingNo': buildingNo,
+      'registrationNo': registrationNo,
+      'registrationNo': familyHeadName,
+      'malesCount': malesCount,
+      'femalesCount': femalesCount,
+      'widows': [for (final widow in widows) widow.toJson()],
+      'divorced': [for (final div in divorced) div.toJson()],
+      'disabilities': disabilities,
+      'lowIncome': [for (final low in lowIncome) low.toJson()],
+      'unemployed': [for (final unEmp in unemployed) unEmp.toJson()],
+      'familyHeadDeathDate': familyHeadDeathDate,
+      'currentFamilyHeadName': currentFamilyHeadName,
+      'formFiller': formFiller,
+      'notes': notes,
+    });
 
   @override
-  JsonMap toJson() =>
-      super.toJson()
-        ..addAll({
-          'streetNo': streetNo,
-          'buildingNo': buildingNo,
-          '': registrationNo,
-          'registrationNo': familyHeadName,
-          'malesCount': malesCount,
-          'femalesCount': femalesCount,
-          'widows': [for(final widow in widows) widow.toJson()],
-          'divorced': [for(final div in divorced) div.toJson()],
-          'disabilities': disabilities,
-          'lowIncome': [for(final low in lowIncome) low.toJson()],
-          'unemployed': [for(final unEmp in unemployed) unEmp.toJson()],
-          'familyHeadDeathDate': familyHeadDeathDate,
-          'currentFamilyHeadName': currentFamilyHeadName,
-          'formFiller': formFiller,
-          'notes': notes,
-        });
-
-
-  @override
-  List<Object?> get props =>
-      super.props
-        ..addAll([
-          streetNo,
-          buildingNo,
-          registrationNo,
-          familyHeadName,
-          malesCount,
-          femalesCount,
-          ...widows,
-          ...divorced,
-          disabilities,
-          ...lowIncome,
-          ...unemployed,
-          familyHeadDeathDate,
-          currentFamilyHeadName,
-          formFiller,
-          notes,
-        ]);
+  List<Object?> get props => super.props
+    ..addAll([
+      streetNo,
+      buildingNo,
+      registrationNo,
+      familyHeadName,
+      malesCount,
+      femalesCount,
+      ...widows,
+      ...divorced,
+      disabilities,
+      ...lowIncome,
+      ...unemployed,
+      familyHeadDeathDate,
+      currentFamilyHeadName,
+      formFiller,
+      notes,
+    ]);
 }
