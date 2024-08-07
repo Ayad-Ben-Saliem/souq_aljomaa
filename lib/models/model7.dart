@@ -398,7 +398,7 @@ class Model7 extends BaseModel {
       'streetNo': streetNo,
       'buildingNo': buildingNo,
       'registrationNo': registrationNo,
-      'registrationNo': familyHeadName,
+      'familyHeadName': familyHeadName,
       'malesCount': malesCount,
       'femalesCount': femalesCount,
       'widows': [for (final widow in widows) widow.toJson()],
