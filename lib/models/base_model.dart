@@ -1,15 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:souq_aljomaa/main.dart';
 import 'package:souq_aljomaa/utils.dart';
+import 'package:path/path.dart';
 
 abstract class BaseModel extends Equatable {
-  const BaseModel({this.id, this.at, required this.scanner});
-
-  BaseModel.copyWith(BaseModel model, {int? id, DateTime? at, required String? scanner})
-      : id = id ?? model.id,
-        at = at ?? model.at,
-        scanner = scanner ?? model.scanner;
-
   String get documentType;
 
   String get documentTitle;
@@ -18,17 +13,47 @@ abstract class BaseModel extends Equatable {
 
   final DateTime? at;
 
-  final String? scanner;
+  final Iterable<String> documents;
+
+  BaseModel({
+    required this.id,
+    required this.at,
+    Iterable<String> documents = const [],
+  }) : documents = List.unmodifiable(documents);
+
+  BaseModel.copyWith(
+    BaseModel model, {
+    required int? id,
+    required DateTime? at,
+    required Iterable<String>? documents,
+  })  : id = id ?? model.id,
+        at = at ?? model.at,
+        documents = List.unmodifiable(documents ?? model.documents);
+
+  BaseModel copyWith({
+    int? id,
+    DateTime? at,
+    Iterable<String>? documents,
+  });
 
   @mustCallSuper
-  JsonMap toJson() {
+  JsonMap get toJson {
     return {
       'id': id,
       'at': at?.toIso8601String(),
-      'scanner': scanner,
+      'documents': documents,
     };
   }
 
+  Iterable<String> get documentsUrl {
+    final serverUrl = sharedPreferences.getString('serverUrl');
+    return List.unmodifiable(
+      serverUrl == null ? [] : [for (final document in documents) isFileExist(document) ? document : join(serverUrl, 'files', document)],
+    );
+  }
+
+  JsonMap get jsonify => toJson;
+
   @override
-  List<Object?> get props => [id, at, scanner];
+  List<Object?> get props => [id, at, documents];
 }

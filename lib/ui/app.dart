@@ -12,13 +12,14 @@ import 'package:window_manager/window_manager.dart';
 
 final authController = RestfulAuthController();
 final autoLoginUser = FutureProvider<User?>((ref) async {
-  if (!sharedPreferences.containsKey('access_token')) return null;
+  final accessToken = sharedPreferences.getString('access_token');
 
-  return authController.autoLogin(sharedPreferences.getString('access_token')!);
+  return accessToken != null ? authController.autoLogin(accessToken) : null;
 });
+
 final currentUser = StateProvider<User?>((ref) {
-  if(ref.watch(autoLoginUser).hasValue) return ref.watch(autoLoginUser).value;
-  return null;
+  final gettingUser = ref.watch(autoLoginUser);
+  return gettingUser.hasValue ? gettingUser.value : null;
 });
 
 class App extends StatefulWidget {

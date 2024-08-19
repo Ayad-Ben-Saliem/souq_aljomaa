@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:souq_aljomaa/models/base_model.dart';
 import 'package:souq_aljomaa/utils.dart';
 
@@ -23,10 +25,10 @@ class Model6 extends BaseModel {
   final String businessType;
   final String businessCategory;
 
-  const Model6({
+  Model6({
     super.id,
     super.at,
-    super.scanner,
+    super.documents,
     required this.ownerName,
     required this.ownerPhone,
     required this.tenantName,
@@ -37,11 +39,27 @@ class Model6 extends BaseModel {
     required this.businessCategory,
   });
 
+  factory Model6.fromJson(JsonMap json) {
+    return Model6(
+      id: json['id'],
+      at: DateTime.parse(json['at']),
+      documents: json['documents'],
+      ownerName: json['ownerName'],
+      ownerPhone: json['ownerPhone'],
+      tenantName: json['tenantName'],
+      tenantPhone: json['tenantPhone'],
+      streetCode: json['streetCode'],
+      shopNo: json['shopNo'],
+      businessType: json['businessType'],
+      businessCategory: json['businessCategory'],
+    );
+  }
+
   Model6.copyWith(
     Model6 super.model, {
     super.id,
     super.at,
-    super.scanner,
+    super.documents,
     String? ownerName,
     String? ownerPhone,
     String? tenantName,
@@ -60,10 +78,11 @@ class Model6 extends BaseModel {
         businessCategory = businessCategory ?? model.businessCategory,
         super.copyWith();
 
+  @override
   Model6 copyWith({
     int? id,
     DateTime? at,
-    String? scanner,
+    Iterable<String>? documents,
     String? ownerName,
     String? ownerPhone,
     String? tenantName,
@@ -77,7 +96,7 @@ class Model6 extends BaseModel {
         this,
         id: id,
         at: at,
-        scanner: scanner,
+        documents: documents,
         ownerName: ownerName,
         ownerPhone: ownerPhone,
         tenantName: tenantName,
@@ -88,24 +107,8 @@ class Model6 extends BaseModel {
         businessCategory: businessCategory,
       );
 
-  factory Model6.fromJson(JsonMap json) {
-    return Model6(
-      id: json['id'],
-      at: DateTime.parse(json['at']),
-      scanner: json['scanner'],
-      ownerName: json['ownerName'],
-      ownerPhone: json['ownerPhone'],
-      tenantName: json['tenantName'],
-      tenantPhone: json['tenantPhone'],
-      streetCode: json['streetCode'],
-      shopNo: json['shopNo'],
-      businessType: json['businessType'],
-      businessCategory: json['businessCategory'],
-    );
-  }
-
   @override
-  JsonMap toJson() => super.toJson()
+  JsonMap get toJson => super.toJson
     ..addAll({
       'ownerName': ownerName,
       'ownerPhone': ownerPhone,
@@ -116,6 +119,9 @@ class Model6 extends BaseModel {
       'businessType': businessType,
       'businessCategory': businessCategory,
     });
+
+  @override
+  JsonMap get jsonify => toJson;
 
   @override
   List<Object?> get props => super.props

@@ -34,7 +34,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model1 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
-        scanner TEXT,
+        documents TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -54,7 +54,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model2 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
-        scanner TEXT,
+        documents TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -74,7 +74,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model3 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
-        scanner TEXT,
+        documents TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -94,7 +94,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model4 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
-        scanner TEXT,
+        documents TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -115,7 +115,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model5 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
-        scanner TEXT,
+        documents TEXT,
         locality TEXT NOT NULL,
         witness TEXT NOT NULL,
         responsible TEXT NOT NULL,
@@ -140,7 +140,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model6 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
-        scanner TEXT,
+        documents TEXT,
         ownerName TEXT NOT NULL,
         ownerPhone TEXT NOT NULL,
         tenantName TEXT NOT NULL,
@@ -156,7 +156,7 @@ abstract class Database {
       CREATE TABLE IF NOT EXISTS Model7 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         at TEXT NOT NULL,
-        scanner TEXT,
+        documents TEXT,
         streetNo TEXT NOT NULL,
         buildingNo TEXT NOT NULL,
         registrationNo TEXT NOT NULL,
@@ -430,7 +430,7 @@ abstract class Database {
       '''
       INSERT INTO Model1 (
         at,
-        scanner,
+        documents,
         locality,
         witness,
         responsible,
@@ -447,7 +447,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -474,7 +474,7 @@ abstract class Database {
       UPDATE Model1
       SET 
         at = ?,
-        scanner = ?,
+        documents = ?,
         locality = ?,
         witness = ?,
         responsible = ?,
@@ -492,7 +492,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -541,7 +541,7 @@ abstract class Database {
       '''
       INSERT INTO Model2 (
         at,
-        scanner,
+        documents,
         locality,
         witness,
         responsible,
@@ -558,7 +558,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -585,7 +585,7 @@ abstract class Database {
       UPDATE Model2
       SET 
         at = ?,
-        scanner = ?,
+        documents = ?,
         locality = ?,
         witness = ?,
         responsible = ?,
@@ -603,7 +603,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -652,7 +652,7 @@ abstract class Database {
       '''
       INSERT INTO Model3 (
         at,
-        scanner,
+        documents,
         locality,
         witness,
         responsible,
@@ -669,7 +669,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -696,7 +696,7 @@ abstract class Database {
       UPDATE Model3
       SET 
         at = ?,
-        scanner = ?,
+        documents = ?,
         locality = ?,
         witness = ?,
         responsible = ?,
@@ -714,7 +714,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -763,7 +763,7 @@ abstract class Database {
       '''
       INSERT INTO Model4 (
         at,
-        scanner,
+        documents,
         locality,
         witness,
         responsible,
@@ -780,7 +780,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -807,7 +807,7 @@ abstract class Database {
       UPDATE Model4
       SET 
         at = ?,
-        scanner = ?,
+        documents = ?,
         locality = ?,
         witness = ?,
         responsible = ?,
@@ -825,7 +825,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -874,7 +874,7 @@ abstract class Database {
       '''
       INSERT INTO Model5 (
         at,
-        scanner,
+        documents,
         locality,
         witness,
         responsible,
@@ -896,7 +896,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -928,7 +928,7 @@ abstract class Database {
       UPDATE Model5
       SET 
         at = ?,
-        scanner = ?,
+        documents = ?,
         locality = ?,
         witness = ?,
         responsible = ?,
@@ -951,7 +951,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.locality,
         model.witness,
         model.responsible,
@@ -1006,7 +1006,7 @@ abstract class Database {
       '''
       INSERT INTO Model6 (
         at,
-        scanner,
+        documents,
         ownerName,
         ownerPhone,
         tenantName,
@@ -1019,7 +1019,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.ownerName,
         model.ownerPhone,
         model.tenantName,
@@ -1042,7 +1042,7 @@ abstract class Database {
       UPDATE Model6
       SET 
         at = ?,
-        scanner = ?,
+        documents = ?,
         ownerName = ?,
         ownerPhone = ?,
         tenantName = ?,
@@ -1056,7 +1056,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.ownerName,
         model.ownerPhone,
         model.tenantName,
@@ -1098,18 +1098,18 @@ abstract class Database {
     assert(model.id == null, "can't insert, id not null");
 
     const jsonEncoder = JsonEncoder();
-    final widows = jsonEncoder.convert([for (final widow in model.widows) widow.toJson()]);
-    final divorced = jsonEncoder.convert([for (final divorced in model.divorced) divorced.toJson()]);
-    final disabilities = jsonEncoder.convert(model.disabilities?.toJson());
-    final lowIncome = jsonEncoder.convert([for (final lowIncome in model.lowIncome) lowIncome.toJson()]);
-    final unemployed = jsonEncoder.convert([for (final unemployed in model.unemployed) unemployed.toJson()]);
-    final formFiller = jsonEncoder.convert(model.formFiller.toJson());
+    final widows = jsonEncoder.convert([for (final widow in model.widows) widow.toJson]);
+    final divorced = jsonEncoder.convert([for (final divorced in model.divorced) divorced.toJson]);
+    final disabilities = model.disabilities?.toString();
+    final lowIncome = jsonEncoder.convert([for (final lowIncome in model.lowIncome) lowIncome.toJson]);
+    final unemployed = jsonEncoder.convert([for (final unemployed in model.unemployed) unemployed.toJson]);
+    final formFiller = model.formFiller.toString();
 
     _db.execute(
       '''
       INSERT INTO Model7 (
         at,
-        scanner,
+        documents,
         streetNo,
         buildingNo,
         registrationNo,
@@ -1129,7 +1129,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.streetNo,
         model.buildingNo,
         model.registrationNo,
@@ -1155,19 +1155,19 @@ abstract class Database {
     assert(model.id != null, "Null id, can't edit");
 
     const jsonEncoder = JsonEncoder();
-    final widows = jsonEncoder.convert([for (final widow in model.widows) widow.toJson()]);
-    final divorced = jsonEncoder.convert([for (final divorced in model.divorced) divorced.toJson()]);
-    final disabilities = jsonEncoder.convert(model.disabilities?.toJson());
-    final lowIncome = jsonEncoder.convert([for (final lowIncome in model.lowIncome) lowIncome.toJson()]);
-    final unemployed = jsonEncoder.convert([for (final unemployed in model.unemployed) unemployed.toJson()]);
-    final formFiller = jsonEncoder.convert(model.formFiller.toJson());
+    final widows = jsonEncoder.convert([for (final widow in model.widows) widow.toJson]);
+    final divorced = jsonEncoder.convert([for (final divorced in model.divorced) divorced.toJson]);
+    final disabilities = model.disabilities?.toString();
+    final lowIncome = jsonEncoder.convert([for (final lowIncome in model.lowIncome) lowIncome.toJson]);
+    final unemployed = jsonEncoder.convert([for (final unemployed in model.unemployed) unemployed.toJson]);
+    final formFiller = model.formFiller.toString();
 
     _db.execute(
       '''
       UPDATE Model7
       SET 
         at = ?,
-        scanner = ?,
+        documents = ?,
         streetNo = ?,
         buildingNo = ?,
         registrationNo = ?,
@@ -1188,7 +1188,7 @@ abstract class Database {
       ''',
       [
         model.at!.toIso8601String(),
-        model.scanner,
+        model.documents,
         model.streetNo,
         model.buildingNo,
         model.registrationNo,
@@ -1244,7 +1244,7 @@ abstract class Database {
   // ==================================================
 
   static String _whereInQuery(Iterable ids) {
-    if (ids.isEmpty) log('Warning!!! empty ids in `WHERE id IN ()`');
+    if (ids.isEmpty) debug('Warning!!! empty ids in `WHERE id IN ()`');
 
     var query = '(';
     for (final id in ids) {

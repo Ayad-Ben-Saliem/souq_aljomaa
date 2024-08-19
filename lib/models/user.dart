@@ -60,7 +60,7 @@ class User {
         modelsModifier: modelsModifier,
       );
 
-  JsonMap toJson() => {
+  JsonMap get toJson => {
         'id': id,
         'name': name,
         'username': username,
@@ -72,5 +72,5 @@ class User {
   bool get canModifyModels => isAdmin || modelsModifier;
 
   @override
-  String toString() => Utils.getPrettyString(toJson());
+  String toString() => Utils.getPrettyString(toJson);
 }

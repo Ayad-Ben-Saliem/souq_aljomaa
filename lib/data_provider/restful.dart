@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -42,9 +43,12 @@ abstract class Restful {
         final user = User.fromJson(result.data['current_user']);
         return Pair(accessToken, user);
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return null;
   }
 
@@ -57,9 +61,12 @@ abstract class Restful {
         final user = User.fromJson(result.data['current_user']);
         return Pair(accessToken, user);
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return null;
   }
 
@@ -76,9 +83,12 @@ abstract class Restful {
       if (statusCode != null && statusCode >= 200 && statusCode < 300) {
         return User.fromJson(response.data);
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return null;
   }
 
@@ -89,9 +99,12 @@ abstract class Restful {
       if (statusCode != null && statusCode >= 200 && statusCode < 300) {
         return [for (final jsonUser in response.data) User.fromJson(jsonUser)];
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return [];
   }
 
@@ -101,27 +114,33 @@ abstract class Restful {
 
   static Future<User?> addUser(User user) async {
     try {
-      final response = await _dio.post('/users', data: user.toJson());
+      final response = await _dio.post('/users', data: user.toJson);
       final statusCode = response.statusCode;
       if (statusCode != null && statusCode >= 200 && statusCode < 300) {
         return User.fromJson(response.data);
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return null;
   }
 
   static Future<User?> editUser(User user) async {
     try {
-      final response = await _dio.put('/users/${user.id}', data: user.toJson());
+      final response = await _dio.put('/users/${user.id}', data: user.toJson);
       final statusCode = response.statusCode;
       if (statusCode != null && statusCode >= 200 && statusCode < 300) {
         return User.fromJson(response.data);
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return null;
   }
 
@@ -130,9 +149,12 @@ abstract class Restful {
       final response = await _dio.delete('/users/${user.id}');
       final statusCode = response.statusCode;
       return statusCode != null && statusCode >= 200 && statusCode < 300;
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return false;
   }
 
@@ -154,9 +176,12 @@ abstract class Restful {
       if (statusCode != null && statusCode >= 200 && statusCode < 300) {
         return _getModelFromData(modelType, response.data);
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return null;
   }
 
@@ -173,9 +198,12 @@ abstract class Restful {
         }
         return result;
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return [];
   }
 
@@ -189,16 +217,20 @@ abstract class Restful {
       final statusCode = response.statusCode;
       if (statusCode != null && statusCode >= 200 && statusCode < 300) {
         final result = <BaseModel>[];
-        final data = response.data as JsonMap;
-        for (final modelType in data.keys) {
-          for (final modelData in data[modelType]) {
-            result.add(_getModelFromData(modelType, modelData));
+        if (response.data != null) {
+          final data = response.data as JsonMap;
+          for (final modelType in data.keys) {
+            for (final modelData in data[modelType]) {
+              result.add(_getModelFromData(modelType, modelData));
+            }
           }
         }
         return result;
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
 
     return [];
@@ -218,9 +250,12 @@ abstract class Restful {
       final response = await _dio.delete('/models/$tableName/$id');
       final statusCode = response.statusCode;
       return statusCode != null && statusCode >= 200 && statusCode < 300;
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return false;
   }
 
@@ -230,14 +265,22 @@ abstract class Restful {
 
       model = _prepareModel(model);
 
-      final response = await _dio.post('/models/${model.documentType}', data: model.toJson());
+      FormData formData = FormData.fromMap({
+        "files": await _multipartDocument(model.documents),
+        "data": jsonEncode(model.jsonify),
+      });
+
+      final response = await _dio.post('/models/${model.documentType}', data: formData);
       final statusCode = response.statusCode;
       if (statusCode != null && statusCode >= 200 && statusCode < 300) {
         return _getModelFromData(model.documentType, response.data);
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return null;
   }
 
@@ -268,15 +311,30 @@ abstract class Restful {
 
       model = _prepareModel(model);
 
-      final response = await _dio.put('/models/${model.documentType}/${model.id}', data: model.toJson());
+      FormData formData = FormData.fromMap({
+        "files": await _multipartDocument(model.documents),
+        "data": jsonEncode(model.jsonify),
+      });
+
+      final response = await _dio.put('/models/${model.documentType}/${model.id}', data: formData);
       final statusCode = response.statusCode;
       if (statusCode != null && statusCode >= 200 && statusCode < 300) {
         return _getModelFromData(model.documentType, response.data);
       }
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
+
     return null;
+  }
+
+  static Future<Iterable<MultipartFile>> _multipartDocument(Iterable<String> docs) async {
+    return [
+      for (final docPath in docs)
+        if (isFileExist(docPath)) await MultipartFile.fromFile(docPath, filename: path.basename(docPath))
+    ];
   }
 
   static BaseModel _prepareModel(BaseModel model) {
@@ -297,8 +355,10 @@ abstract class Restful {
       final response = await _dio.download('/backup', path.join(savePath, 'backup.db'), data: {'password': password});
       final statusCode = response.statusCode;
       return statusCode != null && statusCode >= 200 && statusCode < 300;
-    } catch (e) {
-      log(e);
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
     }
     return false;
   }
@@ -308,7 +368,10 @@ abstract class Restful {
       final response = await _dio.get('');
       final statusCode = response.statusCode;
       return statusCode != null && statusCode == 200 && response.data == 'OK';
-    } catch (e) {
+    } catch (error, stackTrace) {
+      debug(error);
+      debug(stackTrace);
+      Utils.catchError(error, stackTrace);
       return false;
     }
   }

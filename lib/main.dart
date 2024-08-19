@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,35 +10,50 @@ import 'package:souq_aljomaa/data_provider/restful.dart';
 import 'package:souq_aljomaa/ui/app.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:souq_aljomaa/utils.dart';
 import 'package:window_manager/window_manager.dart';
 
 late final SharedPreferences sharedPreferences;
 
-void main() async {
-  sharedPreferences = await SharedPreferences.getInstance();
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  initializeDateFormatting();
-  await findSystemLocale();
+    SharedPreferences.getInstance().then((preferences) => sharedPreferences = preferences);
 
-  if (Platform.isLinux) PathProviderLinux.registerWith();
-  if (Platform.isWindows) PathProviderWindows.registerWith();
+    initializeDateFormatting();
+    await findSystemLocale();
 
-  await windowManager.ensureInitialized();
+    if (Platform.isLinux) PathProviderLinux.registerWith();
+    if (Platform.isWindows) PathProviderWindows.registerWith();
 
-  WindowOptions windowOptions = const WindowOptions(
-    // size: Size(800, 600),
-    center: true,
-    skipTaskbar: false,
-    title: 'منظومة البلديات',
-  );
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
+    await windowManager.ensureInitialized();
+
+    WindowOptions windowOptions = const WindowOptions(
+      // size: Size(800, 600),
+      center: true,
+      skipTaskbar: false,
+      title: 'منظومة البلديات',
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+
+    final serverUrl = sharedPreferences.getString('serverUrl');
+    if (serverUrl != null && serverUrl.isNotEmpty) Restful.initialize();
+
+    runApp(const ProviderScope(child: App()));
+  }, (error, stackTrace) {
+    _handleError(error, stackTrace);
   });
+}
 
-  final serverUrl = sharedPreferences.getString('serverUrl');
-  if (serverUrl != null && serverUrl.isNotEmpty) Restful.initialize();
+void _handleError(Object error, StackTrace stackTrace) {
+  // Log the error and stack trace
+  debug('Caught error: $error');
+  debug('Stack trace: $stackTrace');
 
-  runApp(const ProviderScope(child: App()));
+  // Catch error to deal with
+  Utils.catchError(error, stackTrace);
 }

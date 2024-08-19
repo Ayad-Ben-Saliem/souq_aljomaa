@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 typedef JsonMap = Map<String, dynamic>;
 typedef Pair<K, T> = MapEntry<K, T>;
@@ -155,6 +158,61 @@ class Utils {
         ),
       ),
     );
+  }
+
+  static Future<bool> checkInternetConnectivity() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static void catchError(Object error, StackTrace stackTrace) {
+    // Save the error to a file
+    _saveErrorToFile(error, stackTrace);
+
+    // Optionally, send the error to the developer
+    // _sendErrorIfOnline(error, stackTrace);
+  }
+
+  static void _saveErrorToFile(Object error, StackTrace stackTrace) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/errors.txt';
+    final file = File(path);
+
+    final timestamp = DateTime.now().toIso8601String();
+    await file.writeAsString(
+      'Time: $timestamp\n'
+          'Error:\n$error\n'
+          'StackTrace:\n$stackTrace\n\n',
+      mode: FileMode.append,
+    );
+  }
+
+  static void _sendErrorIfOnline(Object error, StackTrace stackTrace) async {
+    final isConnected = await Utils.checkInternetConnectivity();
+    if (isConnected) {
+      // Attempt to send the error to Sentry
+      await Sentry.captureException(error, stackTrace: stackTrace);
+    } else {
+      // Save locally if offline
+      _saveErrorToFile(error, stackTrace);
+    }
+  }
+
+  static void _retrySendingErrors() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/errors.txt';
+    final file = File(path);
+
+    if (await file.exists()) {
+      final errors = await file.readAsString();
+      // Parse and send each error to Sentry, then clear the log
+      // Once successful, clear the log file
+      await file.writeAsString('');
+    }
   }
 }
 
@@ -308,6 +366,22 @@ extension StringExtension on String {
   }
 }
 
-void log(Object? object) {
+void debug(Object? object) {
   if (kDebugMode) print(object);
+}
+
+bool isImage(String filename) {
+  for (final ext in ['.png', '.jpg', '.jpeg', '.tif']) {
+    if (filename.endsWith(ext)) return true;
+  }
+  return false;
+}
+
+bool isRemoteUrl(String path) {
+  final uri = Uri.tryParse(path);
+  return uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+}
+
+bool isFileExist(String filename) {
+  return File(filename).existsSync();
 }

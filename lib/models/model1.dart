@@ -32,10 +32,10 @@ class Model1 extends BaseModel {
 
   final DateTime date;
 
-  const Model1({
+  Model1({
     super.id,
     super.at,
-    super.scanner,
+    super.documents,
     required this.locality,
     required this.witness,
     required this.responsible,
@@ -50,11 +50,31 @@ class Model1 extends BaseModel {
     required this.date,
   });
 
+  factory Model1.fromJson(JsonMap json) {
+    return Model1(
+      id: json['id'],
+      at: DateTime.parse(json['at']),
+      documents: json['documents'],
+      locality: json['locality'],
+      witness: json['witness'],
+      responsible: json['responsible'],
+      firstName: json['firstName'],
+      fatherName: json['fatherName'],
+      grandfatherName: json['grandfatherName'],
+      lastName: json['lastName'],
+      motherName: json['motherName'],
+      identifierNo: json['identifierNo'],
+      nationalId: json['nationalId'],
+      testimony: json['testimony'],
+      date: DateTime.parse(json['date']),
+    );
+  }
+
   Model1.copyWith(
     Model1 super.model, {
     super.id,
     super.at,
-    super.scanner,
+    super.documents,
     String? locality,
     String? witness,
     String? responsible,
@@ -81,10 +101,11 @@ class Model1 extends BaseModel {
         date = date ?? model.date,
         super.copyWith();
 
+  @override
   Model1 copyWith({
     int? id,
     DateTime? at,
-    String? scanner,
+    Iterable<String>? documents,
     String? locality,
     String? witness,
     String? responsible,
@@ -102,7 +123,7 @@ class Model1 extends BaseModel {
         this,
         id: id,
         at: at,
-        scanner: scanner,
+        documents: documents,
         locality: locality,
         witness: witness,
         responsible: responsible,
@@ -117,26 +138,6 @@ class Model1 extends BaseModel {
         date: date,
       );
 
-  factory Model1.fromJson(JsonMap json) {
-    return Model1(
-      id: json['id'],
-      at: DateTime.parse(json['at']),
-      scanner: json['scanner'],
-      locality: json['locality'],
-      witness: json['witness'],
-      responsible: json['responsible'],
-      firstName: json['firstName'],
-      fatherName: json['fatherName'],
-      grandfatherName: json['grandfatherName'],
-      lastName: json['lastName'],
-      motherName: json['motherName'],
-      identifierNo: json['identifierNo'],
-      nationalId: json['nationalId'],
-      testimony: json['testimony'],
-      date: DateTime.parse(json['date']),
-    );
-  }
-
   String get fullName => '$firstName $fatherName $grandfatherName $lastName';
 
   String formattedDate([String? format = 'yyyy/MM/dd', String? locale]) {
@@ -146,7 +147,8 @@ class Model1 extends BaseModel {
   HijriDate? get hijriDate => HijriDate.dateToHijri(date);
 
   @override
-  JsonMap toJson() => super.toJson()..addAll({
+  JsonMap get toJson => super.toJson
+    ..addAll({
       'locality': locality,
       'witness': witness,
       'responsible': responsible,
@@ -155,12 +157,14 @@ class Model1 extends BaseModel {
       'grandfatherName': grandfatherName,
       'lastName': lastName,
       'motherName': motherName,
-      'identifierNo' : identifierNo,
+      'identifierNo': identifierNo,
       'nationalId': nationalId,
       'testimony': testimony,
       'date': date.toIso8601String()
     });
 
+  @override
+  JsonMap get jsonify => toJson;
 
   @override
   List<Object?> get props => super.props

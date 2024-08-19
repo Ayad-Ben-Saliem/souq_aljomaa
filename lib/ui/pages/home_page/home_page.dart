@@ -21,6 +21,7 @@ import 'package:souq_aljomaa/pdf/syncfusion_pdf_builder.dart';
 import 'package:souq_aljomaa/ui/app.dart';
 import 'package:souq_aljomaa/ui/custom_tab_view.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
+import 'package:souq_aljomaa/ui/file_preview.dart';
 import 'package:souq_aljomaa/ui/pages/home_page/drawer.dart';
 import 'package:souq_aljomaa/ui/pages/model1page.dart';
 import 'package:souq_aljomaa/ui/pages/model2page.dart';
@@ -29,6 +30,7 @@ import 'package:souq_aljomaa/ui/pages/model4page.dart';
 import 'package:souq_aljomaa/ui/pages/model5page.dart';
 import 'package:souq_aljomaa/ui/pages/model6page.dart';
 import 'package:souq_aljomaa/ui/pages/model7page.dart';
+import 'package:souq_aljomaa/utils.dart';
 
 final userController = RestfulUserController();
 final modelController = RestfulModelController();
@@ -106,33 +108,34 @@ class _HomePageState extends ConsumerState<HomePage> {
                   child: PagedListView<int, BaseModel>(
                     pagingController: pagingController,
                     builderDelegate: PagedChildBuilderDelegate<BaseModel>(
-                        animateTransitions: true,
-                        itemBuilder: (context, model, index) => ModelListTile(model: model),
-                        firstPageErrorIndicatorBuilder: (context) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CustomText('ابحث لعرض النتائج'),
-                            ),
-                          );
-                        },
-                        newPageErrorIndicatorBuilder: (context) => Container(),
-                        noItemsFoundIndicatorBuilder: (context) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CustomText('لا يوجد نماذج لعرضها'),
-                            ),
-                          );
-                        },
-                        noMoreItemsIndicatorBuilder: (context) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CustomText('لا يوجد المزيد من النماذج لعرضها'),
-                            ),
-                          );
-                        }),
+                      animateTransitions: true,
+                      itemBuilder: (context, model, index) => ModelListTile(model: model),
+                      firstPageErrorIndicatorBuilder: (context) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CustomText('ابحث لعرض النتائج'),
+                          ),
+                        );
+                      },
+                      newPageErrorIndicatorBuilder: (context) => Container(),
+                      noItemsFoundIndicatorBuilder: (context) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CustomText('لا يوجد نماذج لعرضها'),
+                          ),
+                        );
+                      },
+                      noMoreItemsIndicatorBuilder: (context) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CustomText('لا يوجد المزيد من النماذج لعرضها'),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -226,7 +229,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget _pdfPage(Uint8List bytes, BaseModel model) {
     return CustomTabView(
       isScrollable: false,
-      itemCount: model.scanner == null ? 1 : 2,
+      itemCount: model.documentsUrl.length + 1,
       tabBuilder: (context, index) {
         if (index == 0) {
           return SizedBox(
@@ -251,7 +254,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           );
         }
-        return const SizedBox(height: kToolbarHeight, child: Center(child: CustomText('الصورة الممسوحة')));
+        return SizedBox(height: kToolbarHeight, child: Center(child: CustomText('المستند ($index)')));
       },
       pageBuilder: (context, index) {
         if (index == 0) {
@@ -265,7 +268,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           );
         }
-        return Image.file(File(model.scanner!));
+        return FilePreview(model.documentsUrl.elementAt(index - 1));
       },
     );
   }
@@ -288,6 +291,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (!showAllData && text?.isEmpty == true) {
       text = null;
     }
+
     try {
       final models = await modelController.search(
         searchText: text,

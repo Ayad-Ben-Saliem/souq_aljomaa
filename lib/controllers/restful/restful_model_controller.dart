@@ -13,6 +13,11 @@ class RestfulModelController {
     return models;
   }
 
+  Future<BaseModel?> saveModel(BaseModel model) async {
+    return model.id == null ? addModel(model) : editModel(model);
+  }
+
+
   Future<BaseModel?> addModel(BaseModel model) async {
     final result = await Restful.addModel(model);
     if (result != null) _models.add(result);

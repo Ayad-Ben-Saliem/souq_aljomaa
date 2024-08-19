@@ -4,16 +4,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:souq_aljomaa/models/model6.dart';
-import 'package:souq_aljomaa/data_provider/file_manager.dart';
 import 'package:souq_aljomaa/ui/custom_text.dart';
 import 'package:souq_aljomaa/ui/custom_text_field.dart';
+import 'package:souq_aljomaa/ui/file_preview.dart';
 import 'package:souq_aljomaa/ui/pages/home_page/home_page.dart';
 
 final _modelProvider = StateProvider((ref) => _initialValue);
 
 final _formKey = GlobalKey<FormState>();
 
-const _emptyValue = Model6(
+final _emptyValue = Model6(
   ownerName: '',
   ownerPhone: '',
   tenantName: '',
@@ -251,28 +251,47 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                             const SizedBox(height: 32),
                             ElevatedButton(
                               onPressed: () async {
-                                FilePickerResult? result = await FilePicker.platform.pickFiles(dialogTitle: 'اختر صورة', type: FileType.image);
-                                if (result == null) return;
-                                ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(scanner: result.files.first.path);
+                                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                                  dialogTitle: 'اختر مستند',
+                                  type: FileType.image,
+                                );
+                                if (result == null || result.files.isEmpty) return;
+
+                                final documents = List.of(ref.read(_modelProvider).documents);
+                                for (final file in result.files) {
+                                  if (file.path != null)documents.add(file.path!);
+                                }
+
+                                ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(documents: documents);
                               },
-                              child: const Text('تحميل صورة للمستند'),
+                              child: const Text('تحميل مستندات'),
                             ),
                             const SizedBox(height: 16),
                             Consumer(
                               builder: (context, ref, _) {
-                                final imagePath = ref.watch(_modelProvider.select((model) => model.scanner));
-                                if (imagePath == null || imagePath.isEmpty) return Container();
-                                return ConstrainedBox(
-                                  constraints: const BoxConstraints(maxWidth: 256, maxHeight: 256),
-                                  child: Stack(
-                                    children: [
-                                      Image.file(File(imagePath)),
-                                      IconButton(
-                                        onPressed: () => ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(scanner: ''),
-                                        icon: const Icon(Icons.delete_outline),
+                                final documents = ref.watch(_modelProvider.select((model) => model.documentsUrl));
+                                if (documents.isEmpty) return Container();
+
+                                return Wrap(
+                                  children: [
+                                    for (var index = 0; index < documents.length; index++)
+                                      ConstrainedBox(
+                                        constraints: const BoxConstraints(maxWidth: 256, maxHeight: 256),
+                                        child: Stack(
+                                          children: [
+                                            Center(child: FilePreview(documents.elementAt(index))),
+                                            IconButton(
+                                              onPressed: () {
+                                                final docs = List.of(ref.read(_modelProvider).documents);
+                                                docs.removeAt(index);
+                                                ref.read(_modelProvider.notifier).state = ref.read(_modelProvider).copyWith(documents: docs);
+                                              },
+                                              icon: const Icon(Icons.delete_outline),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
+                                  ],
                                 );
                               },
                             ),
@@ -297,39 +316,42 @@ class _Model6PageState extends ConsumerState<Model6Page> {
                   const Padding(padding: EdgeInsets.all(8.0), child: Divider()),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Consumer(builder: (context, ref, child) {
-                      return ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState?.validate() == true) {
-                            var model = ref.read(_modelProvider);
-                            if (model.ownerName.trim().isNotEmpty ||
-                                model.ownerPhone.trim().isNotEmpty ||
-                                model.tenantName.trim().isNotEmpty ||
-                                model.tenantPhone.trim().isNotEmpty ||
-                                model.streetCode.trim().isNotEmpty ||
-                                model.shopNo.trim().isNotEmpty ||
-                                model.businessType.trim().isNotEmpty ||
-                                model.businessCategory.trim().isNotEmpty) {
-                              if (model.scanner?.isNotEmpty == true) {
-                                model = model.copyWith(scanner: await FileManager.saveImage(model.scanner!));
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        return ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState?.validate() == true) {
+                              var model = ref.read(_modelProvider);
+                              if (model.ownerName.trim().isNotEmpty ||
+                                  model.ownerPhone.trim().isNotEmpty ||
+                                  model.tenantName.trim().isNotEmpty ||
+                                  model.tenantPhone.trim().isNotEmpty ||
+                                  model.streetCode.trim().isNotEmpty ||
+                                  model.shopNo.trim().isNotEmpty ||
+                                  model.businessType.trim().isNotEmpty ||
+                                  model.businessCategory.trim().isNotEmpty) {
+                                // Used with local storage
+                                // final docs = [for (final doc in model.documents) await FileManager.saveImage(doc)];
+                                // model = model.copyWith(documents: docs);
+
+                                modelController.saveModel(model).then((value) {
+                                  Navigator.pop(context);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: CustomText('تم الحفظ بنجاح')));
+
+                                  HomePage.refresh(ref);
+                                });
                               }
-                              modelController.addModel(model).then((value) {
-                                Navigator.pop(context);
-
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: CustomText('تم الحفظ بنجاح')));
-
-                                HomePage.refresh(ref);
-                              });
                             }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const CustomText('حفظ'),
-                      );
-                    }),
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const CustomText('حفظ'),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

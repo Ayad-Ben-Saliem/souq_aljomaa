@@ -20,7 +20,7 @@ class Widow extends Equatable {
     );
   }
 
-  JsonMap toJson() => {'name': name, 'malesCount': malesCount, 'femalesCount': femalesCount};
+  JsonMap get toJson => {'name': name, 'malesCount': malesCount, 'femalesCount': femalesCount};
 
   Widow.copyWith(Widow widow, {String? name, int? malesCount, int? femalesCount})
       : name = name ?? widow.name,
@@ -31,6 +31,9 @@ class Widow extends Equatable {
 
   @override
   List<Object?> get props => [name, malesCount, femalesCount];
+
+  @override
+  String toString() => Utils.getPrettyString(toJson);
 }
 
 class Divorced extends Equatable {
@@ -49,7 +52,7 @@ class Divorced extends Equatable {
     );
   }
 
-  JsonMap toJson() => {'name': name, 'malesCount': malesCount, 'femalesCount': femalesCount};
+  JsonMap get toJson => {'name': name, 'malesCount': malesCount, 'femalesCount': femalesCount};
 
   Divorced.copyWith(Divorced divorced, {String? name, int? malesCount, int? femalesCount})
       : name = name ?? divorced.name,
@@ -60,6 +63,9 @@ class Divorced extends Equatable {
 
   @override
   List<Object?> get props => [name, malesCount, femalesCount];
+
+  @override
+  String toString() => Utils.getPrettyString(toJson);
 }
 
 class Disabilities extends Equatable {
@@ -79,7 +85,7 @@ class Disabilities extends Equatable {
     return json != null ? Disabilities.fromJson(json) : null;
   }
 
-  JsonMap toJson() => {'malesCount': malesCount, 'femalesCount': femalesCount};
+  JsonMap get toJson => {'malesCount': malesCount, 'femalesCount': femalesCount};
 
   Disabilities.copyWith(Disabilities disabilities, {String? name, int? malesCount, int? femalesCount})
       : malesCount = malesCount ?? disabilities.malesCount,
@@ -89,6 +95,9 @@ class Disabilities extends Equatable {
 
   @override
   List<Object?> get props => [malesCount, femalesCount];
+
+  @override
+  String toString() => Utils.getPrettyString(toJson);
 }
 
 class LowIncome extends Equatable {
@@ -104,7 +113,7 @@ class LowIncome extends Equatable {
     );
   }
 
-  JsonMap toJson() => {'name': name, 'type': type.name};
+  JsonMap get toJson => {'name': name, 'type': type.name};
 
   LowIncome.copyWith(LowIncome lowIncome, {String? name, LowIncomeType? type})
       : name = name ?? lowIncome.name,
@@ -114,6 +123,9 @@ class LowIncome extends Equatable {
 
   @override
   List<Object?> get props => [name, type];
+
+  @override
+  String toString() => Utils.getPrettyString(toJson);
 }
 
 enum LowIncomeType {
@@ -152,7 +164,7 @@ class Unemployed extends Equatable {
     );
   }
 
-  JsonMap toJson() => {'name': name, 'gender': gender.name, 'qualification': qualification.name};
+  JsonMap get toJson => {'name': name, 'gender': gender.name, 'qualification': qualification.name};
 
   Unemployed.copyWith(Unemployed unemployed, {String? name, Gender? gender, Qualification? qualification})
       : name = name ?? unemployed.name,
@@ -163,6 +175,9 @@ class Unemployed extends Equatable {
 
   @override
   List<Object?> get props => [name, gender, qualification];
+
+  @override
+  String toString() => Utils.getPrettyString(toJson);
 }
 
 enum Qualification {
@@ -219,7 +234,7 @@ class FormFiller extends Equatable {
     );
   }
 
-  JsonMap toJson() => {'name': name, 'phoneNo': phoneNo};
+  JsonMap get toJson => {'name': name, 'phoneNo': phoneNo};
 
   FormFiller.copyWith(FormFiller formFiller, {String? name, String? phoneNo})
       : name = name ?? formFiller.name,
@@ -229,6 +244,9 @@ class FormFiller extends Equatable {
 
   @override
   List<Object?> get props => [name, phoneNo];
+
+  @override
+  String toString() => Utils.getPrettyString(toJson);
 }
 
 class Model7 extends BaseModel {
@@ -269,7 +287,7 @@ class Model7 extends BaseModel {
   Model7({
     super.id,
     super.at,
-    super.scanner,
+    super.documents,
     required this.streetNo,
     required this.buildingNo,
     required this.registrationNo,
@@ -290,11 +308,41 @@ class Model7 extends BaseModel {
         lowIncome = List<LowIncome>.unmodifiable(lowIncome),
         unemployed = List<Unemployed>.unmodifiable(unemployed);
 
+  factory Model7.fromJson(JsonMap json) {
+   // json['documents'] = json['documents'] is String ? jsonDecode(json['documents']) : [];
+    // json['widows'] = json['widows'] is String ? jsonDecode(json['widows']) : [];
+    // json['divorced'] = json['divorced'] is String ? jsonDecode(json['divorced']) : [];
+    // json['disabilities'] = json['disabilities'] is String ? jsonDecode(json['disabilities']) : null;
+    // json['lowIncome'] = json['lowIncome'] is String ? jsonDecode(json['lowIncome']) : [];
+    // json['unemployed'] = json['unemployed'] is String ? jsonDecode(json['unemployed']) : [];
+
+    return Model7(
+      id: json['id'],
+      at: DateTime.parse(json['at']),
+      documents: List<String>.unmodifiable(json['documents']),
+      streetNo: json['streetNo'],
+      buildingNo: json['buildingNo'],
+      registrationNo: json['registrationNo'],
+      familyHeadName: json['familyHeadName'],
+      malesCount: json['malesCount'],
+      femalesCount: json['femalesCount'],
+      widows: List<Widow>.unmodifiable([for (final widow in jsonDecode(json['widows'] ?? '[]')) Widow.fromJson(widow)]),
+      divorced: List<Divorced>.unmodifiable([for (final divorced in jsonDecode(json['divorced'] ?? '[]')) Divorced.fromJson(divorced)]),
+      disabilities: Disabilities.tryFromJson(json['disabilities'] != null ? jsonDecode(json['disabilities']) : null),
+      lowIncome: List<LowIncome>.unmodifiable([for (final lowIncome in jsonDecode(json['lowIncome'] ?? '[]')) LowIncome.fromJson(lowIncome)]),
+      unemployed: List<Unemployed>.unmodifiable([for (final unemployed in jsonDecode(json['unemployed'] ?? '[]')) Unemployed.fromJson(unemployed)]),
+      familyHeadDeathDate: DateTime.tryParse(json['familyHeadDeathDate'] ?? ''),
+      currentFamilyHeadName: json['currentFamilyHeadName'],
+      formFiller: FormFiller.fromJson(jsonDecode(json['formFiller'])),
+      notes: json['notes'],
+    );
+  }
+
   Model7.copyWith(
     Model7 super.model, {
     super.id,
     super.at,
-    super.scanner,
+    super.documents,
     String? streetNo,
     String? buildingNo,
     String? registrationNo,
@@ -327,10 +375,11 @@ class Model7 extends BaseModel {
         notes = notes ?? model.notes,
         super.copyWith();
 
+  @override
   Model7 copyWith({
     int? id,
     DateTime? at,
-    String? scanner,
+    Iterable<String>? documents,
     String? streetNo,
     String? buildingNo,
     String? registrationNo,
@@ -351,7 +400,7 @@ class Model7 extends BaseModel {
         this,
         id: id,
         at: at,
-        scanner: scanner,
+        documents: documents,
         streetNo: streetNo,
         buildingNo: buildingNo,
         registrationNo: registrationNo,
@@ -369,31 +418,8 @@ class Model7 extends BaseModel {
         notes: notes,
       );
 
-  factory Model7.fromJson(JsonMap json) {
-    return Model7(
-      id: json['id'],
-      at: DateTime.parse(json['at']),
-      scanner: json['scanner'],
-      streetNo: json['streetNo'],
-      buildingNo: json['buildingNo'],
-      registrationNo: json['registrationNo'],
-      familyHeadName: json['familyHeadName'],
-      malesCount: json['malesCount'],
-      femalesCount: json['femalesCount'],
-      widows: List<Widow>.unmodifiable([for (final widow in jsonDecode(json['widows'] ?? '[]')) Widow.fromJson(widow)]),
-      divorced: List<Divorced>.unmodifiable([for (final divorced in jsonDecode(json['divorced'] ?? '[]')) Divorced.fromJson(divorced)]),
-      disabilities: Disabilities.tryFromJson(json['disabilities']),
-      lowIncome: List<LowIncome>.unmodifiable([for (final lowIncome in jsonDecode(json['lowIncome'] ?? '[]')) LowIncome.fromJson(lowIncome)]),
-      unemployed: List<Unemployed>.unmodifiable([for (final unemployed in jsonDecode(json['unemployed'] ?? '[]')) Unemployed.fromJson(unemployed)]),
-      familyHeadDeathDate: DateTime.tryParse(json['familyHeadDeathDate'] ?? ''),
-      currentFamilyHeadName: json['currentFamilyHeadName'],
-      formFiller: FormFiller.fromJson(jsonDecode(json['formFiller'])),
-      notes: json['notes'],
-    );
-  }
-
   @override
-  JsonMap toJson() => super.toJson()
+  JsonMap get toJson => super.toJson
     ..addAll({
       'streetNo': streetNo,
       'buildingNo': buildingNo,
@@ -401,16 +427,25 @@ class Model7 extends BaseModel {
       'familyHeadName': familyHeadName,
       'malesCount': malesCount,
       'femalesCount': femalesCount,
-      'widows': [for (final widow in widows) widow.toJson()],
-      'divorced': [for (final div in divorced) div.toJson()],
-      'disabilities': disabilities,
-      'lowIncome': [for (final low in lowIncome) low.toJson()],
-      'unemployed': [for (final unEmp in unemployed) unEmp.toJson()],
+      'widows': [for (final widow in widows) widow.toJson],
+      'divorced': [for (final div in divorced) div.toJson],
+      'disabilities': disabilities?.toJson,
+      'lowIncome': [for (final low in lowIncome) low.toJson],
+      'unemployed': [for (final unEmp in unemployed) unEmp.toJson],
       'familyHeadDeathDate': familyHeadDeathDate,
       'currentFamilyHeadName': currentFamilyHeadName,
-      'formFiller': formFiller,
+      'formFiller': formFiller.toJson,
       'notes': notes,
     });
+
+  @override
+  JsonMap get jsonify {
+    final json = toJson;
+    for (final key in ['widows', 'divorced', 'disabilities', 'lowIncome', 'unemployed', 'formFiller']) {
+      json[key] = json[key] != null ? jsonEncode(json[key]) : null;
+    }
+    return json;
+  }
 
   @override
   List<Object?> get props => super.props
